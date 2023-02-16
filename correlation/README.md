@@ -1,0 +1,1 @@
+This folder contains scripts to reproduce the correlation results from the Enformer paper
