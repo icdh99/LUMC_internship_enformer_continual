@@ -1,4 +1,4 @@
-*.out
-*.fa
-*.fasta
-*.fai
+**.out
+**.fa
+**.fasta
+**.fai
