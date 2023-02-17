@@ -1,11 +1,13 @@
 #!/bin/bash
 #SBATCH --mail-type=END,FAIL
 #SBATCH --mail-user=icdenhond@gmail.com
-#SBATCH --time=01:00:00
+#SBATCH --time=04:00:00
 #SBATCH --partition=highmemgpu
 #SBATCH --gres=gpu:1
 #SBATCH --mem=40G
 #SBATCH --output=Reports/%j.%x.out
+
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/exports/humgen/idenhond/miniconda3/envs/enformer_dev/lib 
 
 script=/exports/humgen/idenhond/projects/enformer/correlation/evaluate_correlation.py
 
