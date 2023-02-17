@@ -1,10 +1,10 @@
 #!/bin/bash
 #SBATCH --mail-type=END,FAIL
 #SBATCH --mail-user=icdenhond@gmail.com
-#SBATCH --time=1-00:00:00
+#SBATCH --time=01:00:00
 #SBATCH --partition=highmemgpu
 #SBATCH --gres=gpu:1
-#SBATCH --mem=80G
+#SBATCH --mem=40G
 #SBATCH --output=Reports/%j.%x.out
 
 script=/exports/humgen/idenhond/projects/enformer/correlation/evaluate_correlation.py

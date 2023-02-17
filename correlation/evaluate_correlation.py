@@ -1,3 +1,5 @@
+from datetime import datetime
+start = datetime.now()
 import torch
 import numpy as np
 import tensorflow as tf
@@ -163,9 +165,10 @@ class BasenjiDataSet(torch.utils.data.IterableDataset):
 model = Enformer.from_pretrained("EleutherAI/enformer-official-rough")
 model = model.eval().cuda()
 
+print(f'Time after loading model: {datetime.now() - start}') 
+
 # def compute_correlation(model, organism:str="human", subset:str="valid", max_steps=-1):
 def compute_correlation(model, organism:str="human", subset:str=subset, max_steps=max_steps):
-  # max steps = -1 to calculate this over all steps
   print(f'organism: {organism}')
   print(f'subset: {subset}')
   fasta_path = human_fasta_path if organism == "human" else mouse_fasta_path
@@ -182,12 +185,31 @@ def compute_correlation(model, organism:str="human", subset:str=subset, max_step
       break
     batch_gpu = {k:v.to(model.device) for k,v in batch.items()}
     sequence = batch_gpu['sequence']
+    print(f'sequence type: {type(sequence)}')
+    print(f'sequence shape: {sequence.shape}')
     target = batch_gpu['target']
     with torch.no_grad():
       pred = model(sequence)[organism]
+      print(type(pred))
+      print(f'pred shape: {pred.shape}')
       corr_coef(preds=pred.cpu(), target=target.cpu())
-  print(f'the correlation coefficient for {organism} {subset} sequences calculated over {n_steps} sequence-target sets is {corr_coef.compute().mean()}')
+      # compu = corr_coef.compute()
+      # print(f'{i} corr coef compute: {compu}')
+      # print(f'{i} shape corr coef compute: {compu.shape} ')
+
+  
+  compu = corr_coef.compute()
+  print(f'final corr coef compute: {compu}')
+  print(f'final shape corr coef compute: {compu.shape} ')
+  print(f'the mean correlation coefficient for {organism} {subset} sequences calculated over {n_steps} sequence-target sets is {corr_coef.compute().mean()}')
+
+  t_np = compu.numpy()
+  print(t_np.shape)
+  df = pd.DataFrame(t_np)
+  df.to_csv("testfile.csv",index=False)
   return corr_coef.compute().mean()
 
 a = compute_correlation(model, organism="human", subset=subset, max_steps=max_steps)
 print(a)
+
+print(f'Time: {datetime.now() - start}') 
