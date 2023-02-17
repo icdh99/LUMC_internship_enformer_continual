@@ -185,13 +185,13 @@ def compute_correlation(model, organism:str="human", subset:str=subset, max_step
       break
     batch_gpu = {k:v.to(model.device) for k,v in batch.items()}
     sequence = batch_gpu['sequence']
-    print(f'sequence type: {type(sequence)}')
-    print(f'sequence shape: {sequence.shape}')
+    # print(f'sequence type: {type(sequence)}')
+    # print(f'sequence shape: {sequence.shape}')
     target = batch_gpu['target']
     with torch.no_grad():
       pred = model(sequence)[organism]
-      print(type(pred))
-      print(f'pred shape: {pred.shape}')
+      # print(type(pred))
+      # print(f'pred shape: {pred.shape}')
       corr_coef(preds=pred.cpu(), target=target.cpu())
       # compu = corr_coef.compute()
       # print(f'{i} corr coef compute: {compu}')
@@ -206,10 +206,10 @@ def compute_correlation(model, organism:str="human", subset:str=subset, max_step
   t_np = compu.numpy()
   print(t_np.shape)
   df = pd.DataFrame(t_np)
-  df.to_csv("testfile.csv",index=False)
+  df.to_csv(f"/exports/humgen/idenhond/data/evaluate_correlation/correlation_per_track_{subset}.csv",index=True)
   return corr_coef.compute().mean()
 
 a = compute_correlation(model, organism="human", subset=subset, max_steps=max_steps)
-print(a)
+print(f'mean correlation for {subset}: {a}')
 
 print(f'Time: {datetime.now() - start}') 
