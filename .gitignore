@@ -1,4 +1,20 @@
-**.out
+# file extensions to ignore
+**.vcf
 **.fa
 **.fasta
+**.hdf5
+**.h5
+**.fastq
+**.fq
+**.bam
+**.bai
+**.sam
+**.out
+**.txt
 **.fai
+**.csv
+**.json
+**.gz
+**.index
+**.pt
+**.tfr
