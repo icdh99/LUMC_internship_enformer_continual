@@ -36,23 +36,23 @@ plt.figure(1)
 sns.boxplot(data = df[['test correlation', 'validation correlation']], showmeans = True)
     # boxplot for multiple numerical columns
 plt.ylabel('Pearson Correlation Coefficient')
-plt.savefig('/exports/humgen/idenhond/projects/enformer/correlation/Plots/boxplot_own_output_test_val_corr.png', bbox_inches='tight')
+plt.savefig('/exports/humgen/idenhond/projects/enformer/correlation/Plots/own_output_boxplot_test_val_corr.png', bbox_inches='tight')
 
 plt.figure(2)
 plt.ylabel('Pearson Correlation Coefficient')
 sns.violinplot(data = df[['test correlation', 'validation correlation']], orient = 'v')
-plt.savefig('/exports/humgen/idenhond/projects/enformer/correlation/Plots/violinplot_own_output_test_val_corr.png', bbox_inches='tight')
+plt.savefig('/exports/humgen/idenhond/projects/enformer/correlation/Plots/own_output_violinplot_test_val_corr.png', bbox_inches='tight')
 
 # plot scatterplot with validation on x and test on y axis (5313 points) for all points and per assay type
 plt.figure(3)
 plt.axline((0, 0), (1, 1), linewidth=0.5, color='k', linestyle = 'dashed')
 sns.scatterplot(data = df, x = 'test correlation', y = 'validation correlation')
-plt.savefig('/exports/humgen/idenhond/projects/enformer/correlation/Plots/scatterplot_own_output_test_val_corr.png', bbox_inches='tight')
+plt.savefig('/exports/humgen/idenhond/projects/enformer/correlation/Plots/own_output_scatterplot_test_val_corr.png', bbox_inches='tight')
 
 plt.figure(4)
 plt.axline((0, 0), (1, 1), linewidth=0.5, color='k', linestyle = 'dashed')
 sns.scatterplot(data = df, x = 'test correlation', y = 'validation correlation', hue = 'assay type')
-plt.savefig('/exports/humgen/idenhond/projects/enformer/correlation/Plots/scatterplot_own_output_test_val_corr_asssaytype.png', bbox_inches='tight')
+plt.savefig('/exports/humgen/idenhond/projects/enformer/correlation/Plots/own_output_scatterplot_test_val_corr_asssaytype.png', bbox_inches='tight')
 
 for key, value in df['assay type'].value_counts().to_dict().items():
     df_subset = df[df['assay type'] == key]
@@ -60,4 +60,4 @@ for key, value in df['assay type'].value_counts().to_dict().items():
     plt.title(f'Assay type: {key}')
     plt.axline((0, 0), (1, 1), linewidth=0.5, color='k', linestyle = 'dashed')
     sns.scatterplot(data = df_subset, x = 'test correlation', y = 'validation correlation')
-    plt.savefig(f'/exports/humgen/idenhond/projects/enformer/correlation/Plots/scatterplot_own_output_test_val_corr_{key}.png', bbox_inches='tight')
+    plt.savefig(f'/exports/humgen/idenhond/projects/enformer/correlation/Plots/own_output_scatterplot_test_val_corr_{key}.png', bbox_inches='tight')
