@@ -4,10 +4,14 @@ import numpy as np
 from natsort import natsorted
 import glob
 
+# subset = 'test'
+subset = 'valid'
 # select tensorflow records for test sequences
-tfr_path = '/exports/humgen/idenhond/Basenji_data/tfrecords/test*.tfr'
+tfr_path = f'/exports/humgen/idenhond/data/Basenji/tfrecords/{subset}*.tfr'
+# tfr_path = '/exports/humgen/idenhond/Basenji_data/tfrecords/test*.tfr'
 tfr_files = natsorted(glob.glob(tfr_path))
 print(tfr_files)
+
 
 dataset = tf.data.Dataset.from_tensor_slices(tfr_files)
 print(dataset)
