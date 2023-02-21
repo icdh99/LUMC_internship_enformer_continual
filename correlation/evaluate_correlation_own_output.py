@@ -21,13 +21,17 @@ subset = str(sys.argv[1])
 max_steps = int(sys.argv[2])
 
 if subset == 'test':
+  print('you have said test')
   tfr_file = f'/exports/humgen/idenhond/data/Enformer_test/Enformer_test_output/output_test.pt'
 if subset == 'valid':
+  print('you have said valid')
   tfr_file = f'/exports/humgen/idenhond/data/Enformer_validation/Enformer_validation_output/output_validation.pt'
   
 tensor_out = torch.load(tfr_file) 
 print(f'device of output tensor: {tensor_out.device}')
 print(f'shape of output tensor: {tensor_out.shape}\n')
+
+print(f'Time after loading output tensor: {datetime.now() - start}') 
 
 SEQUENCE_LENGTH = 196_608
 BIN_SIZE = 128
@@ -93,6 +97,7 @@ class BasenjiDataSet(torch.utils.data.IterableDataset):
         cls.get_organism_path(organism), 'tfrecords', f'{subset}-*.tfr'
       )
     path_to_tfr_records = f'/exports/humgen/idenhond/data/Basenji/tfrecords/{subset}-*.tfr'
+    print(f"output of get_tfrecord_files function: \n{sorted(tf.io.gfile.glob(path_to_tfr_records), key=lambda x: int(x.split('-')[-1].split('.')[0]))}")
     return sorted(tf.io.gfile.glob(path_to_tfr_records), key=lambda x: int(x.split('-')[-1].split('.')[0]))
   
   @property
@@ -124,6 +129,7 @@ class BasenjiDataSet(torch.utils.data.IterableDataset):
   @classmethod
   def get_dataset(cls, organism, subset, num_threads=8):
     metadata = cls.get_metadata(organism)
+    print(f'metadata in get_dataset_function: \n {metadata}')
     dataset = tf.data.TFRecordDataset(cls.get_tfrecord_files(organism, subset),
                                       compression_type='ZLIB',
                                       num_parallel_reads=num_threads).map(
@@ -218,10 +224,10 @@ def compute_correlation(model, organism:str="human", subset:str=subset, max_step
   print(f'the mean correlation coefficient for {organism} {subset} sequences calculated over {n_steps} sequence-target sets is {corr_coef.compute().mean()}')
 
   # DIT IS NU HELEMAAL OVERSCHREVEN
-  # t_np = compu.numpy()
-  # print(t_np.shape)
-  # df = pd.DataFrame(t_np)
-  # df.to_csv(f"/exports/humgen/idenhond/data/evaluate_correlation/correlation_per_track_{subset}.csv",index=True)
+  t_np = compu.numpy()
+  print(t_np.shape)
+  df = pd.DataFrame(t_np)
+  df.to_csv(f"/exports/humgen/idenhond/data/evaluate_correlation/correlation_per_track_{subset}_own_output.csv",index=True)
   return corr_coef.compute().mean()
 
 a = compute_correlation(model, organism="human", subset=subset, max_steps=max_steps)
