@@ -204,6 +204,9 @@ def compute_correlation(model, organism:str="human", subset:str=subset, max_step
     # print(f'sequence shape: {sequence.shape}')
     # print(f'sequence device: {sequence.device}')
     target = batch_gpu['target']
+    # print(f'target type: {type(target)}')
+    # print(f'target shape: {target.shape}')
+    # print(f'target device: {target.device}')
     with torch.no_grad():
       pred = torch.unsqueeze(tensor_out[i], 0)
       # pred = model(sequence)[organism]
@@ -213,6 +216,7 @@ def compute_correlation(model, organism:str="human", subset:str=subset, max_step
 
       # print(f'is predicted tensor equal to output tensor: {torch.equal(tensor_out_one, pred.cpu())}')
       corr_coef(preds=pred.cpu(), target=target.cpu())
+
       # compu = corr_coef.compute()
       # print(f'{i} corr coef compute: {compu}')
       # print(f'{i} shape corr coef compute: {compu.shape} ')
@@ -222,6 +226,7 @@ def compute_correlation(model, organism:str="human", subset:str=subset, max_step
   print(f'final corr coef compute: {compu}')
   print(f'final shape corr coef compute: {compu.shape} ')
   print(f'the mean correlation coefficient for {organism} {subset} sequences calculated over {n_steps} sequence-target sets is {corr_coef.compute().mean()}')
+  print(f'shape mean correlation coefficient: {corr_coef.compute().mean().shape}')
 
   # DIT IS NU HELEMAAL OVERSCHREVEN
   t_np = compu.numpy()
