@@ -22,10 +22,11 @@ max_steps = int(sys.argv[2])
 
 if subset == 'test':
   print('you have said test')
-  tfr_file = f'/exports/humgen/idenhond/data/Enformer_test/Enformer_test_output/output_test.pt'
+  tfr_file = f'/exports/humgen/idenhond/data/Enformer_test/output_test.pt'
+  ## TODO: bestand verplaatsen naar map en losse .pt bestanden verwijderen
 if subset == 'valid':
   print('you have said valid')
-  tfr_file = f'/exports/humgen/idenhond/data/Enformer_validation/Enformer_validation_output/output_validation.pt'
+  tfr_file = f'/exports/humgen/idenhond/data/Enformer_validation/output_validation.pt'
   
 tensor_out = torch.load(tfr_file) 
 print(f'device of output tensor: {tensor_out.device}')
@@ -232,7 +233,7 @@ def compute_correlation(model, organism:str="human", subset:str=subset, max_step
   t_np = compu.numpy()
   print(t_np.shape)
   df = pd.DataFrame(t_np)
-  df.to_csv(f"/exports/humgen/idenhond/data/evaluate_correlation/correlation_per_track_{subset}_own_output.csv",index=True)
+  df.to_csv(f"/exports/humgen/idenhond/data/evaluate_correlation/correlation_per_track_{subset}_own_output_newmodel.csv",index=True)
   return corr_coef.compute().mean()
 
 a = compute_correlation(model, organism="human", subset=subset, max_steps=max_steps)
