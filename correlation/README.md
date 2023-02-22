@@ -11,3 +11,7 @@ Code is adjusted from ```` /exports/humgen/idenhond/enformer_dev/enformer-pytorc
 
 20/2: evaluate_correlation_own_output.py
 - calculate correlation coefficient with target from tensor flow records and model output from /exports/humgen/idenhond/data/Enformer_test/Enformer_test_output
+
+21/2: evaluate_correlation_random_seqs
+- calculate correlation coefficient with random sequences and targets from tfr files
+
