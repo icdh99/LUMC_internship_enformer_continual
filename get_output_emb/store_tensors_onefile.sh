@@ -14,4 +14,7 @@ echo 'Job ID: ' $SLURM_JOBID
 echo 'Output folder: ' Reports/output.$SLURM_JOB_NAME.$SLURM_JOBID.out
 echo 'Job folder: ' $SLURM_SUBMIT_DIR; echo 
 
-python $script
+# arg 1 = subset
+subset=$1
+echo 'Subset: ' $subset
+python $script $subset
