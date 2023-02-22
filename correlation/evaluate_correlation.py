@@ -203,10 +203,10 @@ def compute_correlation(model, organism:str="human", subset:str=subset, max_step
   print(f'final shape corr coef compute: {compu.shape} ')
   print(f'the mean correlation coefficient for {organism} {subset} sequences calculated over {n_steps} sequence-target sets is {corr_coef.compute().mean()}')
 
-  t_np = compu.numpy()
-  print(t_np.shape)
-  df = pd.DataFrame(t_np)
-  df.to_csv(f"/exports/humgen/idenhond/data/evaluate_correlation/correlation_per_track_{subset}.csv",index=True)
+  # t_np = compu.numpy()
+  # print(t_np.shape)
+  # df = pd.DataFrame(t_np)
+  # df.to_csv(f"/exports/humgen/idenhond/data/evaluate_correlation/correlation_per_track_{subset}.csv",index=True)
   return corr_coef.compute().mean()
 
 a = compute_correlation(model, organism="human", subset=subset, max_steps=max_steps)
