@@ -2,6 +2,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+# 23/2: UNTRAINED MODEL
+
 input_file = '/exports/humgen/idenhond/data/Basenji/human-targets.txt'
 df = pd.read_csv(input_file, sep = '\t')
 df[['assay type', 'description2']] = df.description.str.split(':', n = 1, expand = True) # make new column for assay type

@@ -17,6 +17,8 @@ from enformer_pytorch.metrics import MeanPearsonCorrCoefPerChannel
 from tqdm import tqdm
 from torchmetrics.regression.pearson import PearsonCorrCoef
 
+# 23/2: UNTRAINED MODEL
+
 subset = str(sys.argv[1])
 max_steps = int(sys.argv[2])
 

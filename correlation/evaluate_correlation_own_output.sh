@@ -7,6 +7,8 @@
 #SBATCH --mem=60G
 #SBATCH --output=Reports/%j.%x.out
 
+# 23/2: UNTRAINED MODEL
+
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/exports/humgen/idenhond/miniconda3/envs/enformer_dev/lib 
 
 script=/exports/humgen/idenhond/projects/enformer/correlation/evaluate_correlation_own_output.py
