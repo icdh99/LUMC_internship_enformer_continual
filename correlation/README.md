@@ -11,7 +11,19 @@ Code is adjusted from ```` /exports/humgen/idenhond/enformer_dev/enformer-pytorc
 
 20/2: evaluate_correlation_own_output.py
 - calculate correlation coefficient with target from tensor flow records and model output from /exports/humgen/idenhond/data/Enformer_test/Enformer_test_output
+- untrained model
 
 21/2: evaluate_correlation_random_seqs
 - calculate correlation coefficient with random sequences and targets from tfr files
+
+22/2: evaluate_correlation_own_output_pretrainedmodel.py
+- newmodel --> pretrainedmodel in names
+- calculate correlation coefficient with output generated with pretrained model and targets from tfr files
+- good results
+- analyse correlation coefficient in analyse_tracks_correlation_perassaytype_ownoutputpretrainedmodel.py
+
+TODO:
+- merge analyse_tracks_correlation_own_output_pretrainedmodel.py (plots) and analyse_tracks_correlation_perassaytype_ownoutputpretrainedmodel.py (corr per assay type)
+- plot corr per track per assay type (split from paper) and add corr score in figure
+- calculate correlation coefficient per position (128 bp bin) per track
 
