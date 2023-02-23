@@ -5,32 +5,27 @@ compare output of test sequence 1
 - output from /correlation/evaluate_correlation.py
 """
 
-## TODO: first look at own outputs from old model
-print('tensor test seq 1 old model')
 filepath = '/exports/humgen/idenhond/data/Enformer_test/Enformer_test_output/output_test.pt'
-tensor_out = torch.load(filepath)
-print(f'device of output tensor: {tensor_out.device}')
-print(f'shape of output tensor: {tensor_out.shape}\n')
-
-pred = torch.unsqueeze(tensor_out[0], 0)
-
-print(pred.device)
-print(pred.shape)
-print(pred)
-
-torch.save(pred, 'outputownmodeltestseq1.pt')
-
+tensor_out_old = torch.load(filepath, map_location='cpu')
+print(f'device of output tensor: {tensor_out_old.device}')
+print(f'shape of output tensor: {tensor_out_old.shape}\n')
 
 print('\n')
-## output seq1 from new model
-print('tensor test seq 1 new model')
-filepath = '/exports/humgen/idenhond/data/Enformer_test/Enformer_test_output_newmodel/output_seq1.pt'
-tensor_out = torch.load(filepath)
-print(f'device of output tensor: {tensor_out.device}')
-print(f'shape of output tensor: {tensor_out.shape}\n')
+for t in range(1, 1937+1):
+    print(f'{t} new')
+    filepath = f'/exports/humgen/idenhond/data/Enformer_test/Enformer_test_output_newmodel/output_seq{t}.pt'
+    tensor_out_new = torch.load(filepath, map_location='cpu')
+    # print(f'device of output tensor: {tensor_out_new.device}')
+    # print(f'shape of output tensor: {tensor_out_new.shape}\n')
 
-pred = torch.unsqueeze(tensor_out[0], 0)
+    pred_new = torch.unsqueeze(tensor_out_new, 0)
+    for i in range(0, 1937):
+        pred_old = torch.unsqueeze(tensor_out_old[i], 0)
+        # print(f'{i} old')
+        eq = torch.equal(pred_old, pred_new)
+        # print(f'is pred_old equal to pred new model: {eq}')
+        if eq:
+            print(f'{t} old, {i} new\n {pred_old}\n{pred_new}')
 
-print(pred.device)
-print(pred.shape)
-print(pred)
+
+
