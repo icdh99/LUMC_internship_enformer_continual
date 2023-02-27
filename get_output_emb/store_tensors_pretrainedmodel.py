@@ -81,7 +81,7 @@ for row in df_subset.itertuples():
 
     # output, embeddings = model(seq, return_embeddings = True, head = 'human')
     with torch.no_grad():
-        output, embeddings = model(seq, return_embeddings = True, head = 'human')
+        output, embeddings = model(seq[1], return_embeddings = True, head = 'human')
 
     # print(f'output information')
     # print(f'type output: {type(output)}')
