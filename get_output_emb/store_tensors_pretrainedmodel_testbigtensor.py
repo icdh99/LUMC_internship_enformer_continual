@@ -28,11 +28,11 @@ print(f'number of sequences: {df.shape}')
 df_subset = df[df['category'] == subset].reset_index(drop=True)
 print(f'number of {subset} sequences: {df_subset.shape}')
 
-if not os.path.exists(f'/exports/humgen/idenhond/projects/enformer/get_output_emb/tmp_bed_{subset}'):
-    os.mkdir(f'tmp_bed_{subset}')
-    print(f'directory tmp_bed_{subset} is created')
-else: 
-    print(f'directory tmp_bed_{subset} already exists')
+# if not os.path.exists(f'/exports/humgen/idenhond/projects/enformer/get_output_emb/tmp_bed_{subset}'):
+#     os.mkdir(f'tmp_bed_{subset}')
+#     print(f'directory tmp_bed_{subset} is created')
+# else: 
+#     print(f'directory tmp_bed_{subset} already exists')
 
 
 """
@@ -53,7 +53,44 @@ filter_train = lambda df: df.filter(pl.col('column_4') == subset)
 model = Enformer.from_pretrained("EleutherAI/enformer-official-rough")
 model = model.eval().cuda()
 
+
+
 """
+try to get output and embeddings for all sequences at the same time using torch.no_grad
+"""
+bed_file = '/exports/humgen/idenhond/data/Basenji/sequences.bed'
+ds = GenomeIntervalDataset(
+    bed_file = bed_file,
+    fasta_file = '/exports/humgen/idenhond/genomes/hg38.ml.fa',                  
+    filter_df_fn = filter_train,                        
+    return_seq_indices = True,                          
+    shift_augs = None,                              
+    context_length = 196_608,
+    chr_bed_to_fasta_map = {} )
+
+print(f'number of sequences in ds object: {len(ds)}')
+
+
+length = len(ds)
+
+seq = torch.empty(size=(length, 196608))
+for i in range(length):
+    seq[i] = ds[i].cuda()
+
+print(seq.shape)
+print(seq[0].shape)
+
+with torch.no_grad():
+  output, embeddings = model(seq[1], return_embeddings = True, head = 'human')
+#   print(output)
+#   print(embeddings)
+  print(output.shape)
+  print(embeddings.shape)
+
+exit()
+
+"""
+from store_tensors_pretrainedmodel.py:
 store output and embeddings for each test/valid sequence seperately
 """
 
@@ -105,13 +142,13 @@ for row in df_subset.itertuples():
     # print(f"Datatype embeddings: {embeddings.dtype}") #float32
     # print(f"Device embeddings is stored on: {embeddings.device}\n")
 
-    if subset == 'valid':
+    # if subset == 'valid':
         # torch.save(embeddings, f'/exports/humgen/idenhond/data/Enformer_validation/Enformer_validation_embeddings_newmodel/embeddings_seq{t}.pt')
-        torch.save(output, f'/exports/humgen/idenhond/data/Enformer_validation/Enformer_validation_embeddings_newmodel/output_seq{t}.pt')
+        # torch.save(output, f'/exports/humgen/idenhond/data/Enformer_validation/Enformer_validation_embeddings_newmodel/output_seq{t}.pt')
 
-    if subset == 'test':
+    # if subset == 'test':
         # torch.save(embeddings, f'/exports/humgen/idenhond/data/Enformer_test/Enformer_test_embeddings_newmodel/embeddings_seq{t}.pt')
-        torch.save(output, f'/exports/humgen/idenhond/data/Enformer_test/Enformer_test_embeddings_newmodel/output_seq{t}.pt')
+        # torch.save(output, f'/exports/humgen/idenhond/data/Enformer_test/Enformer_test_embeddings_newmodel/output_seq{t}.pt')
 
 
 print(f'Time: {datetime.now() - start}') 
