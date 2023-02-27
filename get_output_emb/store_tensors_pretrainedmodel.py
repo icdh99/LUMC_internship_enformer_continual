@@ -34,22 +34,12 @@ if not os.path.exists(f'/exports/humgen/idenhond/projects/enformer/get_output_em
 else: 
     print(f'directory tmp_bed_{subset} already exists')
 
-
 """
 load necessary functions and objects only once
 """
 
 filter_train = lambda df: df.filter(pl.col('column_4') == subset)   
 
-# load model
-# model = Enformer.from_hparams(
-#     dim = 1536,
-#     depth = 11,
-#     heads = 8,
-#     output_heads = dict(human = 5313, mouse = 1643),
-#     target_length = 896 ).cuda()
-
-## TODO: change this to pretrained model from huggingface
 model = Enformer.from_pretrained("EleutherAI/enformer-official-rough")
 model = model.eval().cuda()
 
@@ -91,7 +81,7 @@ for row in df_subset.itertuples():
 
     # output, embeddings = model(seq, return_embeddings = True, head = 'human')
     with torch.no_grad():
-        output = model(seq)['human']
+        output, embeddings = model(seq, return_embeddings = True, head = 'human')
 
     # print(f'output information')
     # print(f'type output: {type(output)}')
@@ -106,12 +96,12 @@ for row in df_subset.itertuples():
     # print(f"Device embeddings is stored on: {embeddings.device}\n")
 
     if subset == 'valid':
-        # torch.save(embeddings, f'/exports/humgen/idenhond/data/Enformer_validation/Enformer_validation_embeddings_newmodel/embeddings_seq{t}.pt')
-        torch.save(output, f'/exports/humgen/idenhond/data/Enformer_validation/Enformer_validation_embeddings_newmodel/output_seq{t}.pt')
+        torch.save(embeddings, f'/exports/humgen/idenhond/data/Enformer_validation/Enformer_validation_embeddings_newmodel/embeddings_seq{t}.pt')
+        # torch.save(output, f'/exports/humgen/idenhond/data/Enformer_validation/Enformer_validation_embeddings_newmodel/output_seq{t}.pt')
 
     if subset == 'test':
-        # torch.save(embeddings, f'/exports/humgen/idenhond/data/Enformer_test/Enformer_test_embeddings_newmodel/embeddings_seq{t}.pt')
-        torch.save(output, f'/exports/humgen/idenhond/data/Enformer_test/Enformer_test_embeddings_newmodel/output_seq{t}.pt')
+        torch.save(embeddings, f'/exports/humgen/idenhond/data/Enformer_test/Enformer_test_embeddings_newmodel/embeddings_seq{t}.pt')
+        # torch.save(output, f'/exports/humgen/idenhond/data/Enformer_test/Enformer_test_embeddings_newmodel/output_seq{t}.pt')
 
 
 print(f'Time: {datetime.now() - start}') 
