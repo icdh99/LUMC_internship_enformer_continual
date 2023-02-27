@@ -11,6 +11,7 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/exports/humgen/idenhond/miniconda3/envs
 
 script=/exports/humgen/idenhond/projects/enformer/correlation/evaluate_correlation_testpretrainedmodel.py
 
+
 echo 'Date: ' $(date)
 echo 'Script: ' $script
 echo 'Job name: ' $SLURM_JOB_NAME

@@ -16,6 +16,7 @@ from enformer_pytorch import Enformer
 from enformer_pytorch.metrics import MeanPearsonCorrCoefPerChannel
 from tqdm import tqdm
 from torchmetrics.regression.pearson import PearsonCorrCoef
+import random
 
 """
 test whether you can combine the pretrained enformer model with parameters from the Enformer.get_hparams function 
@@ -28,7 +29,10 @@ model = Enformer.from_hparams(
     output_heads = dict(human = 5313, mouse = 1643),
     target_length = 896 )
 output, embeddings = model(seq, return_embeddings = True, head = 'human')
+
 """
+
+torch.manual_seed(18)
 
 model = Enformer.from_pretrained("EleutherAI/enformer-official-rough")
 model = model.eval().cuda()
@@ -41,8 +45,37 @@ with torch.no_grad():
   print(embeddings)
   print(output.shape)
   print(embeddings.shape)
+  print('\n')
+
+model = Enformer.from_hparams(
+    dim = 1536,
+    depth = 11,
+    heads = 8,
+    output_heads = dict(human = 5313, mouse = 1643),
+    target_length = 896 )
+model = model.eval().cuda()
+
+with torch.no_grad():
+  output, embeddings = model(sequence, return_embeddings = True, head = 'human')
+  print(output)
+  print(embeddings)
+  print(output.shape)
+  print(embeddings.shape)
+
+
 
 exit()
+
+
+
+
+
+
+
+
+
+
+
 
 subset = str(sys.argv[1])
 max_steps = int(sys.argv[2])
