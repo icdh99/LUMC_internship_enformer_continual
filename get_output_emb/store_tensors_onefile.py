@@ -58,26 +58,26 @@ subset = str(sys.argv[1])
 # output validation
 if subset == 'valid':
     print(subset)
-    torch_big = torch.empty(size=(2213, 896, 5313))
+    torch_big = torch.empty(size=(2213, 896, 3072))
     print(torch_big.shape)
     for i in range(1, 2213+1):
-        t = torch.load(f'/exports/humgen/idenhond/data/Enformer_validation/Enformer_validation_output_newmodel/output_seq{i}.pt', map_location=torch.device('cpu'))
+        t = torch.load(f'/exports/humgen/idenhond/data/Enformer_validation/Enformer_validation_embeddings_newmodel/embeddings_seq{i}.pt', map_location=torch.device('cpu'))
         print(i)
         torch_big[i-1] =  t
-    print(f'shape of torch with all output validation: {torch_big.shape}')
-    output_file = '/exports/humgen/idenhond/data/Enformer_validation/output_validation.pt'
+    print(f'shape of torch with all embeddings validation: {torch_big.shape}')
+    output_file = '/exports/humgen/idenhond/data/Enformer_validation/embeddings_validation_pretrainedmodel.pt'
     torch.save(torch_big, output_file)
 
 # output test
 if subset == 'test':
     print(subset)
-    torch_big = torch.empty(size=(1937, 896, 5313))
+    torch_big = torch.empty(size=(1937, 896, 3072))
     print(torch_big.shape)
     for i in range(1, 1937+1):
-        t = torch.load(f'/exports/humgen/idenhond/data/Enformer_test/Enformer_test_output_newmodel/output_seq{i}.pt', map_location=torch.device('cpu'))
+        t = torch.load(f'/exports/humgen/idenhond/data/Enformer_test/Enformer_test_embeddings_newmodel/embeddings_seq{i}.pt', map_location=torch.device('cpu'))
         print(i)
         torch_big[i-1] =  t
-    print(f'shape of torch with all output test: {torch_big.shape}')
-    output_file = '/exports/humgen/idenhond/data/Enformer_test/output_test.pt'
+    print(f'shape of torch with all embeddins test: {torch_big.shape}')
+    output_file = '/exports/humgen/idenhond/data/Enformer_test/embeddings_test_pretrainedmodel.pt'
     torch.save(torch_big, output_file)
 
