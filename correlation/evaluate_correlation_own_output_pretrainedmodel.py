@@ -22,7 +22,7 @@ max_steps = int(sys.argv[2])
 
 if subset == 'test':
   print('you have said test')
-  tfr_file = f'/exports/humgen/idenhond/data/Enformer_test/output_test.pt'
+  tfr_file = f'/exports/humgen/idenhond/data/Enformer_test/Enformer_test_output_newmodel/output_test.pt'
   ## TODO: bestand verplaatsen naar map en losse .pt bestanden verwijderen
 if subset == 'valid':
   print('you have said valid')
@@ -104,6 +104,7 @@ class BasenjiDataSet(torch.utils.data.IterableDataset):
   @property
   def num_channels(self):
     metadata = self.get_metadata(self.organism)
+    # num_targets = 5313 for human
     return metadata['num_targets']
 
   @staticmethod
@@ -193,7 +194,7 @@ def compute_correlation(model, organism:str="human", subset:str=subset, max_step
   total = len(ds.region_df) # number of records
   print(f'number of records: {total}')
   dl = torch.utils.data.DataLoader(ds, num_workers=0, batch_size=1)
-  corr_coef = MeanPearsonCorrCoefPerChannel(n_channels=ds.num_channels)
+  corr_coef = MeanPearsonCorrCoefPerChannel(n_channels=ds.num_channels) # 5313 channels
   n_steps = total if max_steps <= 0 else max_steps
   print(f'number of steps to calculate correlation coefficient: {n_steps}')
   for i,batch in enumerate(tqdm(dl, total=n_steps)):
@@ -201,19 +202,19 @@ def compute_correlation(model, organism:str="human", subset:str=subset, max_step
       break
     batch_gpu = {k:v.to(model.device) for k,v in batch.items()}
     sequence = batch_gpu['sequence']
-    # print(f'sequence type: {type(sequence)}')
-    # print(f'sequence shape: {sequence.shape}')
-    # print(f'sequence device: {sequence.device}')
+    print(f'sequence type: {type(sequence)}')
+    print(f'sequence shape: {sequence.shape}') # torch.Size([1, 196608, 4])
+    print(f'sequence device: {sequence.device}')
     target = batch_gpu['target']
-    # print(f'target type: {type(target)}')
-    # print(f'target shape: {target.shape}')
-    # print(f'target device: {target.device}')
+    print(f'target type: {type(target)}')
+    print(f'target shape: {target.shape}')  # torch.Size([1, 896, 5313])
+    print(f'target device: {target.device}')
     with torch.no_grad():
       pred = torch.unsqueeze(tensor_out[i], 0)
       # pred = model(sequence)[organism]
-      # print(f'pred type: {type(pred)}')
-      # print(f'pred shape: {pred.shape}')
-      # print(f'pred device: {pred.device}')
+      print(f'pred type: {type(pred)}')
+      print(f'pred shape: {pred.shape}')  # torch.Size([1, 896, 5313])
+      print(f'pred device: {pred.device}')
 
       # print(f'is predicted tensor equal to output tensor: {torch.equal(tensor_out_one, pred.cpu())}')
       corr_coef(preds=pred.cpu(), target=target.cpu())
@@ -226,14 +227,14 @@ def compute_correlation(model, organism:str="human", subset:str=subset, max_step
   compu = corr_coef.compute()
   print(f'final corr coef compute: {compu}')
   print(f'final shape corr coef compute: {compu.shape} ')
-  print(f'the mean correlation coefficient for {organism} {subset} sequences calculated over {n_steps} sequence-target sets is {corr_coef.compute().mean()}')
+  # print(f'the mean correlation coefficient for {organism} {subset} sequences calculated over {n_steps} sequence-target sets is {corr_coef.compute().mean()}')
   print(f'shape mean correlation coefficient: {corr_coef.compute().mean().shape}')
 
   # DIT IS NU HELEMAAL OVERSCHREVEN
-  t_np = compu.numpy()
-  print(t_np.shape)
-  df = pd.DataFrame(t_np)
-  df.to_csv(f"/exports/humgen/idenhond/data/evaluate_correlation/correlation_per_track_{subset}_own_output_newmodel.csv",index=True)
+  # t_np = compu.numpy()
+  # print(t_np.shape)
+  # df = pd.DataFrame(t_np)
+  # df.to_csv(f"/exports/humgen/idenhond/data/evaluate_correlation/correlation_per_track_{subset}_own_output_newmodel.csv",index=True)
   return corr_coef.compute().mean()
 
 a = compute_correlation(model, organism="human", subset=subset, max_steps=max_steps)
