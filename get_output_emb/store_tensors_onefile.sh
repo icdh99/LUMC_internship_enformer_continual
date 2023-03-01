@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --mail-type=START,END,FAIL
 #SBATCH --mail-user=icdenhond@gmail.com
-#SBATCH --time=3:00:00
+#SBATCH --time=1-00:00:00
 #SBATCH --mem=150G
 #SBATCH --output=Reports/output.%x.%j.out
 
