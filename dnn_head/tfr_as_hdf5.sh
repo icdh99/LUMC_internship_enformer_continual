@@ -4,7 +4,7 @@
 #SBATCH --time=03:00:00
 #SBATCH --mem=400G
 #SBATCH --output=./Reports/output.%x.%j.out
-#SBATCH --array=101-132
+#SBATCH --array=101-125
 
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/exports/humgen/idenhond/miniconda3/envs/enformer_dev/lib 
 
