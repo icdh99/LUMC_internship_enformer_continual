@@ -1,10 +1,10 @@
 #!/bin/bash
 #SBATCH --mail-type=END,FAIL
 #SBATCH --mail-user=icdenhond@gmail.com
-#SBATCH --time=01:00:00
-# SBATCH --partition=highmemgpu
+#SBATCH --time=03:00:00
+# SBATCH --partition=gpu
 # SBATCH --gres=gpu:1
-#SBATCH --mem=60G
+#SBATCH --mem=400G
 #SBATCH --output=./Reports/output.%x.%j.out
 
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/exports/humgen/idenhond/miniconda3/envs/enformer_dev/lib 
