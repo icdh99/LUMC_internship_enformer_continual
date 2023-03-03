@@ -17,4 +17,4 @@ t = torch.cat([t_input1, t_input2, t_input3, t_input4], dim = 0)
 
 print(f'shape of final tensor: {t.shape}')
 
-torch.save(t, 'embeddings_train.pt')
+torch.save(t, '/exports/humgen/idenhond/data/Enformer_train/embeddings_train.pt')
