@@ -16,7 +16,6 @@ output.dnn_train_pl.sh.14292048 -->report of script
 scripts_tryout/model_2023-03-03 15:41:24.583775 --> stored model
 scripts_tryout/lightning_logs --> logs of pl
 
-
 Redundant scripts:
 dnn_train.py --> pytorch only implementation
 dnn_train_pl_gpu.py --> pytorch lightning gpu implementation (I don't know if it is working)
