@@ -132,14 +132,22 @@ if not os.path.exists(f'./model_{ts}/'):
 	os.makedirs(f'./model_{ts}/')
 
 early_stop_callback = EarlyStopping(monitor="val_loss", 
-                                            min_delta=0.00, 
-                                            patience=5, verbose=False, mode="min")
-modelcheckpoint = ModelCheckpoint(monitor = 'val_loss', mode = 'min', save_top_k = 1, filename = "{epoch}-{step}-{val_loss:.1f}")
+										min_delta=0.00, 
+										patience=5, verbose=False, mode="min")
+
+modelcheckpoint = ModelCheckpoint(monitor = 'val_loss', 
+									mode = 'min', 
+									save_top_k = 1, 
+									filename = "{epoch}-{step}-{val_loss:.1f}")
 
 callbacks = [RichProgressBar(), early_stop_callback, modelcheckpoint]
 
 clf = model()
-trainer = pl.Trainer(max_epochs = EPOCHS, callbacks = callbacks, accelerator = 'gpu', devices = 1, enable_checkpointing = True)
+trainer = pl.Trainer(max_epochs = EPOCHS, 
+		     		callbacks = callbacks, 
+					accelerator = 'gpu', 
+					devices = 1, 
+					enable_checkpointing = True)
 trainer.fit(clf, trainloader, valloader)
 
 print(f'Time after fit: {datetime.now() - start}\n') 
