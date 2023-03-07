@@ -41,8 +41,8 @@ load necessary functions and objects only once
 filter_train = lambda df: df.filter(pl.col('column_4') == subset)   
 
 model = Enformer.from_pretrained("EleutherAI/enformer-official-rough")
-# model = model.eval().cuda()
-model = model.eval()
+model = model.eval().cuda()
+# model = model.eval()
 
 """
 store output and embeddings for each test/valid sequence seperately
@@ -51,9 +51,7 @@ store output and embeddings for each test/valid sequence seperately
 t = 0 
 for row in df_subset.itertuples():
     t += 1
-    print(t, row)
-    if t == 2: 
-        break
+    # print(t, row)
 
     with open(f'tmp_bed_{subset}/tmp_{subset}.bed', 'w') as f:
         f.truncate(0)
@@ -71,8 +69,8 @@ for row in df_subset.itertuples():
         chr_bed_to_fasta_map = {} )
     # print(f'number of sequences in ds object: {len(ds)}')
 
-    # seq = ds[0].cuda()
-    seq = ds[0]
+    seq = ds[0].cuda()
+    # seq = ds[0]
     # print(type(seq))
     # print(seq.device)
     # print(seq.shape)
@@ -88,17 +86,17 @@ for row in df_subset.itertuples():
         output, embeddings = model(seq, return_embeddings = True, head = 'human')
 
 
-    print(f'output information')
-    print(f'type output: {type(output)}')
-    print(f'shape output: {output.shape}') # (1, 896, 5313)
-    print(f'dtype output: {output.dtype}') 
-    print(f"Device seq is stored on: {output.device}\n")
+    # print(f'output information')
+    # print(f'type output: {type(output)}')
+    # print(f'shape output: {output.shape}') # (1, 896, 5313)
+    # print(f'dtype output: {output.dtype}') 
+    # print(f"Device seq is stored on: {output.device}\n")
 
-    print('embedding information')
-    print(f'type embeddings: {type(embeddings)}')
-    print(f"Shape embeddings: {embeddings.shape}")
-    print(f"Datatype embeddings: {embeddings.dtype}") #float32
-    print(f"Device embeddings is stored on: {embeddings.device}\n")
+    # print('embedding information')
+    # print(f'type embeddings: {type(embeddings)}')
+    # print(f"Shape embeddings: {embeddings.shape}")
+    # print(f"Datatype embeddings: {embeddings.dtype}") #float32
+    # print(f"Device embeddings is stored on: {embeddings.device}\n")
 
     # if subset == 'valid':
     #     torch.save(embeddings, f'/exports/humgen/idenhond/data/Enformer_validation/Enformer_validation_embeddings_newmodel/embeddings_seq{t}.pt')
@@ -108,7 +106,7 @@ for row in df_subset.itertuples():
     #     torch.save(embeddings, f'/exports/humgen/idenhond/data/Enformer_test/Enformer_test_embeddings_newmodel/embeddings_seq{t}.pt')
     #     # torch.save(output, f'/exports/humgen/idenhond/data/Enformer_test/Enformer_test_embeddings_newmodel/output_seq{t}.pt')
 
-    # if subset == 'train':
-    #     torch.save(embeddings, f'/exports/humgen/idenhond/data/Enformer_train/Enformer_train_embeddings_newmodel/embeddings_seq{t}.pt')
+    if subset == 'train':
+        torch.save(embeddings, f'/exports/humgen/idenhond/data/Enformer_train/Enformer_train_embeddings_pretrainedmodel/embeddings_seq{t}.pt')
 
 print(f'Time: {datetime.now() - start}') 

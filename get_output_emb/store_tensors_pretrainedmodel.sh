@@ -1,12 +1,11 @@
 #!/bin/bash
-#SBATCH --mail-type=END,FAIL
+#SBATCH --mail-type=START,END,FAIL
 #SBATCH --mail-user=icdenhond@gmail.com
-#SBATCH --time=01:00:00
-# SBATCH --partition=gpu
-# SBATCH --gres=gpu:1
+#SBATCH --time=12:00:00
+#SBATCH --partition=highmemgpu
+#SBATCH --gres=gpu:1
 #SBATCH --mem=40G
 #SBATCH --output=./Reports/output.%x.%j.out
-
 
 script=/exports/humgen/idenhond/projects/enformer/get_output_emb/store_tensors_pretrainedmodel.py
 
