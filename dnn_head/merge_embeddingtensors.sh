@@ -2,7 +2,7 @@
 #SBATCH --mail-type=END,FAIL
 #SBATCH --mail-user=icdenhond@gmail.com
 #SBATCH --time=03:00:00
-#SBATCH --mem=400G
+#SBATCH --mem=1000G
 #SBATCH --output=./Reports/output.%x.%j.out
 
 
