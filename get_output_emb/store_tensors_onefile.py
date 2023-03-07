@@ -90,22 +90,34 @@ if subset == 'trainone':
     for i in range(1, 8504): # 1 tm 8503
         t = torch.load(f'/exports/humgen/idenhond/data/Enformer_train/Enformer_train_embeddings_newmodel/embeddings_seq{i}.pt', map_location=torch.device('cpu'))
         torch_big[i-1] = t
-    print(f'shape of torch with all embeddins test: {torch_big.shape}')
+    print(f'shape of torch with all embeddings test: {torch_big.shape}')
     output_file = '/exports/humgen/idenhond/data/Enformer_train/embeddings_train_pretrainedmodel_one.pt'
     torch.save(torch_big, output_file)
         
 if subset == 'traintwo':
-    print(subset)
-    torch_big = torch.empty(size=(8503, 896, 3072))
-    print(torch_big.shape)
-    index = 0
-    for i in range(8504, 17007):  # 8504 tm 17006
-        t = torch.load(f'/exports/humgen/idenhond/data/Enformer_train/Enformer_train_embeddings_newmodel/embeddings_seq{i}.pt', map_location=torch.device('cpu'))
-        torch_big[index] = t
-        index += 1
-    print(f'shape of torch with all embeddins test: {torch_big.shape}')
-    output_file = '/exports/humgen/idenhond/data/Enformer_train/embeddings_train_pretrainedmodel_two.pt'
-    torch.save(torch_big, output_file)
+    # print(subset)
+    # torch_big = torch.empty(size=(8503, 896, 3072))
+    # print(torch_big.shape)
+    # index = 0
+    # for i in range(8504, 17007):  # 8504 tm 17006
+    #     t = torch.load(f'/exports/humgen/idenhond/data/Enformer_train/Enformer_train_embeddings_newmodel/embeddings_seq{i}.pt', map_location=torch.device('cpu'))
+    #     torch_big[index] = t
+    #     index += 1
+    # print(f'shape of torch with all embeddins test: {torch_big.shape}')
+    # output_file = '/exports/humgen/idenhond/data/Enformer_train/embeddings_train_pretrainedmodel_two.pt'
+    # torch.save(torch_big, output_file)
+    i = 8504 
+    big_tensor = torch.load('/exports/humgen/idenhond/data/Enformer_train/embeddings_train_pretrainedmodel_two.pt', map_location=torch.device('cpu'))
+    print(f'shape of big tensor: {big_tensor.shape}')
+    for j in range(len(big_tensor)): 
+        t = big_tensor[j]
+        # t = torch.unsqueeze(t, 0)
+        print(t.shape)
+        torch.save(t, f'/exports/humgen/idenhond/data/Enformer_train/Enformer_train_embeddings_pretrainedmodel/embeddings_seq{i}.pt')
+        i += 1
+        if j == 3:
+            break
+
 
 if subset == 'trainthree':
     print(subset)

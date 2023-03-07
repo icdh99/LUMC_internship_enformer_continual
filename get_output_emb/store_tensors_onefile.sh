@@ -2,7 +2,7 @@
 #SBATCH --mail-type=START,END,FAIL
 #SBATCH --mail-user=icdenhond@gmail.com
 #SBATCH --time=1-00:00:00
-#SBATCH --mem=150G
+#SBATCH --mem=300G
 #SBATCH --output=Reports/output.%x.%j.out
 
 script=/exports/humgen/idenhond/projects/enformer/get_output_emb/store_tensors_onefile.py
