@@ -23,4 +23,7 @@ data:
 /exports/humgen/idenhond/data/Enformer_validation/Enformer_validation_output_newmodel
 
 
+6/3: store embedding from train sequences in a .pt file per sequence
+script: projects/enformer/get_output_emb/store_tensors_pretrainedmodel.py
+data: data/Enformer_train/Enformer_train_embeddings_pretrainedmodel
 
