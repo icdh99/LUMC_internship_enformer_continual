@@ -3,16 +3,12 @@ start = datetime.now()
 import torch
 import torch.nn as nn
 import pytorch_lightning as pl
-from collections import OrderedDict
-from sklearn.model_selection import train_test_split
 import numpy as np
 from data_class import MyDataset
 from model_class import model
 from torch.utils.data import DataLoader
-from pytorch_lightning.callbacks import RichProgressBar
-from pytorch_lightning.callbacks import ModelCheckpoint
+from pytorch_lightning.callbacks import RichProgressBar, ModelCheckpoint
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping
-from datetime import datetime
 import os
 import random
 
@@ -61,8 +57,7 @@ print(f'number of batches in training generator: {len(training_generator)}')
 ## make folder to store model in
 ts = datetime.timestamp(datetime.now())
 date_time = datetime.fromtimestamp(ts)
-if not os.path.exists(f'./model_{date_time}/'):
-	os.makedirs(f'./model_{date_time}/')
+if not os.path.exists(f'./model_{date_time}/'): os.makedirs(f'./model_{date_time}/')
 
 # define callbacks 
 early_stop_callback = EarlyStopping(monitor="val_loss", 
@@ -77,7 +72,7 @@ modelcheckpoint = ModelCheckpoint(monitor = 'val_loss',
 
 callbacks = [RichProgressBar(), early_stop_callback, modelcheckpoint]
 
-BATCH_SIZE = 32
+BATCH_SIZE = 32 # staat al ergens adners
 EPOCHS = 20
 
 clf = model()
