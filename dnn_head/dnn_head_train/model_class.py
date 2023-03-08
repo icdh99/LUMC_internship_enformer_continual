@@ -8,8 +8,8 @@ class model(pl.LightningModule):
 		super(model, self).__init__()
 		self.linear = nn.Linear(in_features = 3072, out_features = 5313, bias = True)
 		self.softplus = nn.Softplus(beta = 1, threshold = 20)	# default values for nn.Softplus()
-		self.lr = 1e-2
-		self.loss = nn.CrossEntropyLoss()
+		self.lr = 1e-4
+		self.loss = nn.PoissonNLLLoss()
 		self.train_log = []
 
 		self.save_hyperparameters()
@@ -22,7 +22,7 @@ class model(pl.LightningModule):
 
 	def configure_optimizers(self):
 		# define optimizer 
-		return torch.optim.SGD(self.parameters(), lr = self.lr)
+		return torch.optim.Adam(self.parameters(), lr = self.lr)
 
 	def training_step(self, train_batch, batch_idx):
 		# define training loop steps

@@ -11,6 +11,7 @@ list of training/validation IDs --> zelf maken
 """
 class MyDataset(Dataset):
     def __init__(self, list_IDs):
+        assert type(list_IDs) == list, f'list IDs expected type list but got {type(list_IDs)}'
         self.list_IDs = list_IDs
 
     def __len__(self):
@@ -19,7 +20,11 @@ class MyDataset(Dataset):
     def __getitem__(self, index):
         ID = self.list_IDs[index]
         # load data and get label
-        # x = torch.load(f'/exports/humgen/idenhond/data/Enformer_train/Enformer_train_embeddings_pretrainedmodel/embeddings_seq{ID}.pt')
-        y = torch.load(f'/exports/humgen/idenhond/data/Enformer_train/Enformer_train_targets/targets_seq{ID}.pt')
-        return y
+        x = torch.load(f'/exports/humgen/idenhond/data/Enformer_train/Enformer_train_embeddings_pretrainedmodel/embeddings_seq{ID}.pt', map_location=torch.device('cuda'))
+        # print(f'x shape: {x.shape}')
+        y = torch.load(f'/exports/humgen/idenhond/data/Enformer_train/Enformer_train_targets/targets_seq{ID}.pt', map_location=torch.device('cuda'))
+        # print(f'y shape: {y.shape}')
+        y = torch.squeeze(y)
+        # print(f'y shape: {y.shape}')
+        return x, y
     
