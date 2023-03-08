@@ -41,18 +41,44 @@ print(f'number of indices for train: {len(list(indices_train))}')
 print(f'number of indices for val: {len(list(indices_val))}')
 
 partition_indices = {}
-partition_indices['train'] = indices_train
-partition_indices['val'] = indices_val
+partition_indices['train'] = list(indices_train)
+partition_indices['val'] = list(indices_val)
 
 # generators
 training_set = MyDataset(partition_indices['train'])
 print(f'number of train samples: {len(training_set)}')
 
 training_generator = DataLoader(training_set, 
-                                batch_size = 32, 
+                                batch_size = 64, 
                                 shuffle = True, # shuffle sample volgorde in elke epoch? zoiets
-                                num_workers = 6)
+                                num_workers = 0)
 print(f'number of batches in training generator: {len(training_generator)}')
+
+val_set = MyDataset(partition_indices['val'])
+print(f'number of val samples: {len(val_set)}')
+
+val_generator = DataLoader(val_set, 
+                                batch_size = 64, 
+                                shuffle = False, # shuffle sample volgorde in elke epoch? zoiets
+                                num_workers = 0)
+print(f'number of batches in val generator: {len(val_generator)}')
+
+# print(f'length of trainloader: {len(training_generator)}')
+# print(f'length of valloader: {len(val_generator)}')
+# # print(f'trainloader 0 : {(trainloader[0].shape)}')
+# # batch = iter(trainloader)
+# images, labels = next(iter(training_generator))
+# print(f'shape of x: {images.shape}')
+# print(f'shape of labels: {labels.shape}')
+
+# print(f'other method, heel langzaam, altijd met break doen')
+# for test_images, test_labels in training_generator:  
+#     sample_image = test_images[0]    # Reshape them according to your needs.
+#     print(sample_image.shape)
+#     sample_label = test_labels[0]
+#     print(sample_label.shape)
+#     break
+
 
 ## make folder to store model in
 ts = datetime.timestamp(datetime.now())
@@ -72,9 +98,9 @@ modelcheckpoint = ModelCheckpoint(monitor = 'val_loss',
 
 callbacks = [RichProgressBar(), early_stop_callback, modelcheckpoint]
 
-BATCH_SIZE = 32 # staat al ergens adners
-EPOCHS = 20
+BATCH_SIZE = 64 # staat al ergens anders
+EPOCHS = 1
 
 clf = model()
-trainer = pl.Trainer(max_epochs = EPOCHS, callbacks = callbacks, enable_checkpointing = True) # , accelerator = 'gpu', devices = 1  # TODO: naar gpu zetten!! 
-# trainer.fit(clf, trainloader, valloader)
+trainer = pl.Trainer(max_epochs = EPOCHS, callbacks = callbacks, enable_checkpointing = True, accelerator = 'gpu', devices = 1) # , accelerator = 'gpu', devices = 1  # TODO: naar gpu zetten!! 
+trainer.fit(clf, training_generator, val_generator)

@@ -73,8 +73,8 @@ class model(pl.LightningModule):
 		super(model, self).__init__()
 		self.linear = nn.Linear(in_features = 3072, out_features = 5313, bias = True)
 		self.softplus = nn.Softplus(beta = 1, threshold = 20)	# default values for nn.Softplus()
-		self.lr = 1e-2
-		self.loss = nn.CrossEntropyLoss()
+		self.lr = 1e-4
+		self.loss = nn.PoissonNLLLoss()
 		self.train_log = []
 
 		self.save_hyperparameters()
@@ -87,7 +87,7 @@ class model(pl.LightningModule):
 
 	def configure_optimizers(self):
 		# define optimizer 
-		return torch.optim.SGD(self.parameters(), lr = self.lr)
+		return torch.optim.Adam(self.parameters(), lr = self.lr)
 
 	def training_step(self, train_batch, batch_idx):
 		# define training loop steps
@@ -117,12 +117,28 @@ class model(pl.LightningModule):
 		x, y = batch
 		return self(x), y
 
-BATCH_SIZE = 32
+BATCH_SIZE = 64
 EPOCHS = 20
 
-trainloader = DataLoader(traindata, batch_size = BATCH_SIZE, shuffle = True, num_workers = 2)
-valloader = DataLoader(valdata, batch_size = BATCH_SIZE, shuffle = False, num_workers = 2)
-testloader = DataLoader(testdata, batch_size = BATCH_SIZE, shuffle = False, num_workers = 2)
+trainloader = DataLoader(traindata, batch_size = BATCH_SIZE, shuffle = True, num_workers = 0)
+valloader = DataLoader(valdata, batch_size = BATCH_SIZE, shuffle = False, num_workers = 0)
+testloader = DataLoader(testdata, batch_size = BATCH_SIZE, shuffle = False, num_workers = 0)
+
+print(f'length of trainloader: {len(trainloader)}')
+print(f'length of valloader: {len(valloader)}')
+# print(f'trainloader 0 : {(trainloader[0].shape)}')
+# batch = iter(trainloader)
+images, labels = next(iter(trainloader))
+print(f'shape of batch.next: {images.shape}')
+print(f'shape of labels: {labels.shape}')
+
+print(f'other method')
+for test_images, test_labels in trainloader:  
+    sample_image = test_images[0]    # Reshape them according to your needs.
+    print(sample_image.shape)
+    sample_label = test_labels[0]
+    print(sample_label.shape)
+
 
 ## make folder to store model in
 ts = datetime.timestamp(datetime.now())
@@ -150,6 +166,7 @@ trainer.fit(clf, trainloader, valloader)
 
 print(f'Time after fit: {datetime.now() - start}\n') 
 
+
 trainer.test(clf, testloader)
 
 print(f'Time after test: {datetime.now() - start}\n') 
@@ -172,8 +189,8 @@ model.eval()
 predictions = model(torch.from_numpy(X_test.astype(np.float32)))
 print(predictions)
 
-torch.save(predictions, 'tensor_predictionsvalidation_100.pt')
-print(f'predictions are stored in tensor_predictionsvalidation_100.pt')
+torch.save(predictions, 'tensor_predictionsvalidation_100_goodparams.pt')
+print(f'predictions are stored in tensor_predictionsvalidation_100_goodparams.pt')
 
 # y_pred = []
 # y_true = []
