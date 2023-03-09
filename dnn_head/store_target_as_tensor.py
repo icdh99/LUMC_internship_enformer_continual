@@ -32,7 +32,7 @@ def make_parser(): #, rna_mode
 def file_to_records(filename):
     return tf.data.TFRecordDataset(filename, compression_type='ZLIB')
 
-def get_target(subset = 'train'):
+def get_target(subset = 'valid'):
     tfr_path = f'/exports/humgen/idenhond/data/Basenji/tfrecords/{subset}*.tfr'
     tfr_files = natsorted(glob.glob(tfr_path))
     print(f'number of tfr files for {subset} subset: {len(tfr_files)}')
@@ -49,7 +49,8 @@ def get_target(subset = 'train'):
         # print(type(target_np))
         # print(target_np.shape)
         target_tensor = torch.from_numpy(target.numpy())
-        torch.save(target_tensor, f'/exports/humgen/idenhond/data/Enformer_train/Enformer_train_targets/targets_seq{i+1}.pt')
+        # torch.save(target_tensor, f'/exports/humgen/idenhond/data/Enformer_train/Enformer_train_targets/targets_seq{i+1}.pt')
+        torch.save(target_tensor, f'/exports/humgen/idenhond/data/Enformer_validation/Enformer_validation_targets_perseq/targets_seq{i+1}.pt')
     return None
 
 get_target()
