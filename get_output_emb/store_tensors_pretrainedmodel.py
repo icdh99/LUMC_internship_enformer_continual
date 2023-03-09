@@ -98,15 +98,17 @@ for row in df_subset.itertuples():
     # print(f"Datatype embeddings: {embeddings.dtype}") #float32
     # print(f"Device embeddings is stored on: {embeddings.device}\n")
 
-    # if subset == 'valid':
-    #     torch.save(embeddings, f'/exports/humgen/idenhond/data/Enformer_validation/Enformer_validation_embeddings_newmodel/embeddings_seq{t}.pt')
+    if subset == 'valid':
+        # torch.save(embeddings, f'/exports/humgen/idenhond/data/Enformer_validation/Enformer_validation_embeddings_newmodel/embeddings_seq{t}.pt')
+        torch.save(embeddings, f'/exports/humgen/idenhond/data/Enformer_validation/Enformer_validation_embeddings_pretrainedmodel_perseq/embeddings_seq{t}.pt')
+
     #     # torch.save(output, f'/exports/humgen/idenhond/data/Enformer_validation/Enformer_validation_embeddings_newmodel/output_seq{t}.pt')
 
     # if subset == 'test':
     #     torch.save(embeddings, f'/exports/humgen/idenhond/data/Enformer_test/Enformer_test_embeddings_newmodel/embeddings_seq{t}.pt')
     #     # torch.save(output, f'/exports/humgen/idenhond/data/Enformer_test/Enformer_test_embeddings_newmodel/output_seq{t}.pt')
 
-    if subset == 'train':
-        torch.save(embeddings, f'/exports/humgen/idenhond/data/Enformer_train/Enformer_train_embeddings_pretrainedmodel/embeddings_seq{t}.pt')
+    # if subset == 'train':
+        # torch.save(embeddings, f'/exports/humgen/idenhond/data/Enformer_train/Enformer_train_embeddings_pretrainedmodel/embeddings_seq{t}.pt')
 
 print(f'Time: {datetime.now() - start}') 
