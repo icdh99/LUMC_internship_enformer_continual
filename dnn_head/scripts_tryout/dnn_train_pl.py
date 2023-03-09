@@ -10,6 +10,7 @@ from torch.utils.data import Dataset, DataLoader
 from pytorch_lightning.callbacks import RichProgressBar
 from pytorch_lightning.callbacks import ModelCheckpoint
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping
+from pytorch_lightning.loggers import TensorBoardLogger
 from datetime import datetime
 import os
 
@@ -76,7 +77,6 @@ class model(pl.LightningModule):
 		self.lr = 1e-4
 		self.loss = nn.PoissonNLLLoss()
 		self.train_log = []
-
 		self.save_hyperparameters()
 
 	def forward(self, x):
@@ -94,15 +94,18 @@ class model(pl.LightningModule):
 		x, y = train_batch 
 		logits = self.forward(x)
 		loss = self.loss(logits, y)
-		self.log("loss", loss, on_epoch=True)
-		self.train_log.append(loss.detach().numpy())
+		self.log("train_loss", loss, on_epoch=True, prog_bar=True)
+		self.train_log.append(loss.cpu().detach().numpy())
+		# tb_logger = self.logger.experiment
+		# tb_logger.add_scalars("losses", {"train_loss": loss})
+		self.logger.experiment.add_scalars('loss', {'train': loss},self.global_step) 
 		return loss
 	
 	def test_step(self, batch, batch_idx):
 		x, y = batch
 		logits = self.forward(x)
 		test_loss = self.loss(logits, y)
-		self.log("test_loss", test_loss, on_epoch=True)
+		self.log("test_loss", test_loss, on_epoch=True, prog_bar=True)
 		return test_loss
 
 	def validation_step(self, valid_batch, batch_idx):
@@ -110,41 +113,49 @@ class model(pl.LightningModule):
 		x, y = valid_batch
 		logits = self.forward(x)
 		val_loss = self.loss(logits, y)
-		self.log("val_loss", val_loss)
+		self.log("val_loss", val_loss, prog_bar=True)
+		self.logger.experiment.add_scalars('loss', {'valid': val_loss},self.global_step)
+		# self.logger.experiment.add_scalars("losses", {"val_loss": val_loss})
+
 		return val_loss
 
 	def predict_step(self, batch, batch_idx):
 		x, y = batch
 		return self(x), y
+	
 
-BATCH_SIZE = 64
-EPOCHS = 20
+
+BATCH_SIZE = 20
+EPOCHS = 1000
 
 trainloader = DataLoader(traindata, batch_size = BATCH_SIZE, shuffle = True, num_workers = 0)
 valloader = DataLoader(valdata, batch_size = BATCH_SIZE, shuffle = False, num_workers = 0)
 testloader = DataLoader(testdata, batch_size = BATCH_SIZE, shuffle = False, num_workers = 0)
 
-print(f'length of trainloader: {len(trainloader)}')
-print(f'length of valloader: {len(valloader)}')
-# print(f'trainloader 0 : {(trainloader[0].shape)}')
-# batch = iter(trainloader)
-images, labels = next(iter(trainloader))
-print(f'shape of batch.next: {images.shape}')
-print(f'shape of labels: {labels.shape}')
+# print(f'length of trainloader: {len(trainloader)}')
+# print(f'length of valloader: {len(valloader)}')
+# # print(f'trainloader 0 : {(trainloader[0].shape)}')
+# # batch = iter(trainloader)
+# images, labels = next(iter(trainloader))
+# print(f'shape of batch.next: {images.shape}')
+# print(f'shape of labels: {labels.shape}')
 
-print(f'other method')
-for test_images, test_labels in trainloader:  
-    sample_image = test_images[0]    # Reshape them according to your needs.
-    print(sample_image.shape)
-    sample_label = test_labels[0]
-    print(sample_label.shape)
+# print(f'other method')
+# for test_images, test_labels in trainloader:  
+#     sample_image = test_images[0]    # Reshape them according to your needs.
+#     print(sample_image.shape)
+#     sample_label = test_labels[0]
+#     print(sample_label.shape)
 
+# tensorboard logger
+logger = TensorBoardLogger('tb_logs', name = 'val100_epochs_100')
 
 ## make folder to store model in
 ts = datetime.timestamp(datetime.now())
 date_time = datetime.fromtimestamp(ts)
 if not os.path.exists(f'./model_{date_time}/'):
 	os.makedirs(f'./model_{date_time}/')
+print(f'folder where model is stored: ./model_{date_time}')
 
 # define callbacks 
 early_stop_callback = EarlyStopping(monitor="val_loss", 
@@ -161,19 +172,19 @@ modelcheckpoint = ModelCheckpoint(monitor = 'val_loss',
 callbacks = [RichProgressBar(), early_stop_callback, modelcheckpoint]
 
 clf = model()
-trainer = pl.Trainer(max_epochs = EPOCHS, callbacks = callbacks, enable_checkpointing = True) # , accelerator = 'gpu', devices = 1
+trainer = pl.Trainer(max_epochs = EPOCHS, callbacks = callbacks, enable_checkpointing = True, logger = logger, accelerator = 'gpu', devices = 1) # 
 trainer.fit(clf, trainloader, valloader)
 
 print(f'Time after fit: {datetime.now() - start}\n') 
 
-
+exit()
 trainer.test(clf, testloader)
 
 print(f'Time after test: {datetime.now() - start}\n') 
 
 print(f'predictions with clf model')  # two predictions are similar
 predictions = trainer.predict(clf, testloader)
-print(predictions)
+print(f'predictions: {predictions}')
 print('\n')
 
 print(f'predictions with loaded model')	# two predictions are similar

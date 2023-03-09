@@ -2,8 +2,8 @@
 #SBATCH --mail-type=END,FAIL
 #SBATCH --mail-user=icdenhond@gmail.com
 #SBATCH --time=03:00:00
-# SBATCH --partition=gpu
-# SBATCH --gres=gpu:1
+#SBATCH --partition=highmemgpu
+#SBATCH --gres=gpu:1
 #SBATCH --mem=60G
 #SBATCH --output=./Reports/output.%x.%j.out
 
