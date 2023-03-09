@@ -10,7 +10,7 @@ class model(pl.LightningModule):
 		self.softplus = nn.Softplus(beta = 1, threshold = 20)	# default values for nn.Softplus()
 		self.lr = 1e-4
 		self.loss = nn.PoissonNLLLoss()
-		self.train_log = []
+		# self.train_log = []
 
 		self.save_hyperparameters()
 
@@ -29,15 +29,15 @@ class model(pl.LightningModule):
 		x, y = train_batch 
 		logits = self.forward(x)
 		loss = self.loss(logits, y)
-		self.log("loss", loss, on_epoch=True)
-		self.train_log.append(loss.detach().numpy())
+		self.log("train_loss", loss, on_epoch=True, prog_bar=True)
+		self.logger.experiment.add_scalars('loss', {'train': loss},self.global_step)
 		return loss
 	
 	def test_step(self, batch, batch_idx):
 		x, y = batch
 		logits = self.forward(x)
 		test_loss = self.loss(logits, y)
-		self.log("test_loss", test_loss, on_epoch=True)
+		self.log("test_loss", test_loss, on_epoch=True, prog_bar=True)
 		return test_loss
 
 	def validation_step(self, valid_batch, batch_idx):
@@ -45,7 +45,8 @@ class model(pl.LightningModule):
 		x, y = valid_batch
 		logits = self.forward(x)
 		val_loss = self.loss(logits, y)
-		self.log("val_loss", val_loss)
+		self.log("val_loss", val_loss, prog_bar=True)
+		self.logger.experiment.add_scalars('loss', {'valid': val_loss},self.global_step)
 		return val_loss
 
 	def predict_step(self, batch, batch_idx):
