@@ -20,9 +20,9 @@ class MyDataset(Dataset):
     def __getitem__(self, index):
         ID = self.list_IDs[index]
         # load data and get label
-        x = torch.load(f'/exports/humgen/idenhond/data/Enformer_train/Enformer_train_embeddings_pretrainedmodel/embeddings_seq{ID}.pt', map_location=torch.device('cuda'))
+        x = torch.load(f'/exports/humgen/idenhond/data/Enformer_train/Enformer_train_embeddings_pretrainedmodel/embeddings_seq{ID}.pt')
         # print(f'x shape: {x.shape}')
-        y = torch.load(f'/exports/humgen/idenhond/data/Enformer_train/Enformer_train_targets/targets_seq{ID}.pt', map_location=torch.device('cuda'))
+        y = torch.load(f'/exports/humgen/idenhond/data/Enformer_train/Enformer_train_targets/targets_seq{ID}.pt')
         # print(f'y shape: {y.shape}')
         y = torch.squeeze(y)
         # print(f'y shape: {y.shape}')
