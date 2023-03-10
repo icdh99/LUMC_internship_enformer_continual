@@ -3,8 +3,10 @@
 #SBATCH --mail-user=icdenhond@gmail.com
 #SBATCH --time=1-00:00:00
 #SBATCH --partition=highmemgpu
-#SBATCH --gres=gpu:1
-#SBATCH --mem=50G
+#SBATCH --gres=gpu:3
+#SBATCH --ntasks-per-node=3
+#SBATCH --nodes=1
+#SBATCH --mem=90G
 #SBATCH --output=./Reports/output.%x.%j.out
 
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/exports/humgen/idenhond/miniconda3/envs/enformer_dev/lib 
@@ -24,4 +26,7 @@ echo 'Job folder: ' $SLURM_SUBMIT_DIR; echo
 # echo 'Requested GPU count per allocated node: ' $SLURM_GPUS_PER_NODE
 # echo 'Requested GPU count per allocated task: ' $SLURM_GPUS_PER_TASK
 
-python $script
+export MASTER_PORT=16561
+srun python $script
+
+# SBATCH --gpus-per-node=2
