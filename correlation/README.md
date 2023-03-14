@@ -27,3 +27,9 @@ TODO:
 - plot corr per track per assay type (split from paper) and add corr score in figure
 - calculate correlation coefficient per position (128 bp bin) per track
 
+13/2: evaluate_correlation_dnn_head.py
+- use model (dnn head trained on train + valid sequences from enformer) to get enformer output for test sequences 
+- generate model output on the fly
+- calculate correlation between model output + tensor flow record output
+- save correlation scores per track to csv file
+- analyse correlation scores
