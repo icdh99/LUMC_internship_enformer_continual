@@ -32,9 +32,11 @@ if subset == 'test':
   tfr_file = f'/exports/archive/hg-funcgenom-research/idenhond/Enformer_test/Enformer_test_embeddings_newmodel/embeddings_test_pretrainedmodel.pt'
 if subset == 'valid':
   print('you have said valid')
-  tfr_file = f'/exports/humgen/idenhond/data/Enformer_validation/output_validation.pt'
+  tfr_file = f'/exports/archive/hg-funcgenom-research/idenhond/Enformer_validation/Enformer_validation_embeddings_newmodel/embeddings_validation_pretrainedmodel.pt'
+  # tfr_file = f'/exports/humgen/idenhond/data/Enformer_validation/output_validation.pt'
+
   
-tensor_out = torch.load(tfr_file, map_location=torch.device(device)) 
+# tensor_out = torch.load(tfr_file, map_location=torch.device(device)) 
 # print(f'device of output tensor: {tensor_out.device}')
 # print(f'shape of output tensor: {tensor_out.shape}\n')
 
@@ -109,6 +111,7 @@ class model(pl.LightningModule):
 	def predict_step(self, batch, batch_idx):
 		x, y = batch
 		return self(x), y
+  
 class FastaStringExtractor:
     # this class works with human_fasta_path and mouse_fasta_path as fasta_file variable
     def __init__(self, fasta_file):
@@ -158,7 +161,10 @@ class BasenjiDataSet(torch.utils.data.IterableDataset):
     path_to_tfr_records = os.path.join(
         cls.get_organism_path(organism), 'tfrecords', f'{subset}-*.tfr'
       )
-    path_to_tfr_records = f'/exports/humgen/idenhond/data/Basenji/tfrecords/{subset}-*.tfr'
+    if subset == 'train':
+        path_to_tfr_records = f'/exports/archive/hg-funcgenom-research/idenhond/Basenji/tfrecords/{subset}-*.tfr'
+    else:
+        path_to_tfr_records = f'/exports/humgen/idenhond/data/Basenji/tfrecords/{subset}-*.tfr'
     print(f"output of get_tfrecord_files function: \n{sorted(tf.io.gfile.glob(path_to_tfr_records), key=lambda x: int(x.split('-')[-1].split('.')[0]))}")
     return sorted(tf.io.gfile.glob(path_to_tfr_records), key=lambda x: int(x.split('-')[-1].split('.')[0]))
   
@@ -276,7 +282,8 @@ def compute_correlation(model, organism:str="human", subset:str=subset, max_step
     # print(f'target shape: {target.shape}')  # torch.Size([1, 896, 5313])
     # print(f'target device: {target.device}')
     with torch.no_grad():
-      seq_emb = torch.unsqueeze(tensor_out[i], 0)
+      tensor_out = torch.load(f'/exports/humgen/idenhond/data/Enformer_train/Enformer_train_embeddings_pretrainedmodel/embeddings_seq{i+1}.pt', map_location=torch.device(device))
+      seq_emb = torch.unsqueeze(tensor_out, 0)
       # pred = model(seq_emb)[organism]
       pred = model(seq_emb)
       # print(f'pred type: {type(pred)}')
