@@ -15,10 +15,10 @@ import random
 import multiprocessing as mp
 
 def main():
-    mp.set_start_method('spawn', force=True)
+    # mp.set_start_method('spawn', force=True)
 
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    print('Using device (set to GPU if available):', device)
+    # device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    # print('Using device (set to GPU if available):', device)
 
     BATCH_SIZE = 64
     EPOCHS = 20
@@ -40,7 +40,7 @@ def main():
                                     batch_size = BATCH_SIZE, 
                                     shuffle = True, # shuffle sample volgorde in elke epoch? zoiets
                                     num_workers = NUM_WORKERS,
-                                    pin_memory = False)
+                                    pin_memory = True)
     print(f'number of train batches: {len(training_generator)}')
     val_set = MyDataset_val(partition_indices['val'])
     print(f'number of val samples: {len(val_set)}')
@@ -48,7 +48,7 @@ def main():
                                     batch_size = BATCH_SIZE, 
                                     shuffle = False, # shuffle sample volgorde in elke epoch? zoiets
                                     num_workers = NUM_WORKERS,
-                                    pin_memory = False)
+                                    pin_memory = True)
     print(f'number of validation batches: {len(val_generator)}')
 
     # make folder to store model in
@@ -58,7 +58,8 @@ def main():
     print(f'folder where model is stored: ./model_{date_time}')
 
     # tensorboard logger
-    logger = TensorBoardLogger('tb_logs', name = 'train_3epochs_withval_1003')
+    logger = TensorBoardLogger('tb_logs', name = 'test_ddp_1503')
+    print('tb logs folder: tb_logs/test_ddp_1503')
     print(f'logger version: {logger.version}\n')
 
     # define callbacks 
@@ -79,7 +80,7 @@ def main():
                         callbacks = callbacks, 
                         enable_checkpointing = True, 
                         logger = logger, 
-                        accelerator = 'gpu', 
+                        accelerator = 'auto', 
                         num_nodes = 1,
                         devices = 2, 
                         precision = 16,
