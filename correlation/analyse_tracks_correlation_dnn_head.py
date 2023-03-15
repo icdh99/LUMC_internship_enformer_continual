@@ -82,7 +82,7 @@ for key, value in df['assay type'].value_counts().to_dict().items():
     plt.title(f'Assay type: {key}')
     plt.axline((0, 0), (1, 1), linewidth=0.5, color='k', linestyle = 'dashed')
     sns.scatterplot(data = df_subset, x = 'test correlation', y = 'validation correlation')
-    plt.savefig(f'/exports/humgen/idenhond/projects/enformer/correlation/Plots/dnn_head/own_output_pretrainedmodel_scatterplot_test_val_corr_{key}.png', bbox_inches='tight')
+    plt.savefig(f'/exports/humgen/idenhond/projects/enformer/correlation/Plots/dnn_head/dnn_head_pretrainedmodel_scatterplot_test_val_corr_{key}.png', bbox_inches='tight')
 
 # enformer test vs test for each assay type
 
@@ -92,7 +92,7 @@ for key, value in df['assay type'].value_counts().to_dict().items():
     plt.title(f'Assay type: {key}')
     plt.axline((0, 0), (1, 1), linewidth=0.5, color='k', linestyle = 'dashed')
     sns.scatterplot(data = df_subset, x = 'test correlation enformer', y = 'test correlation')
-    plt.savefig(f'/exports/humgen/idenhond/projects/enformer/correlation/Plots/dnn_head/own_output_pretrainedmodel_scatterplot_test_enformer_corr_{key}.png', bbox_inches='tight')
+    plt.savefig(f'/exports/humgen/idenhond/projects/enformer/correlation/Plots/dnn_head/dnn_head_pretrainedmodel_scatterplot_test_enformer_corr_{key}.png', bbox_inches='tight')
 
 for key, value in df['assay type'].value_counts().to_dict().items():
     df_subset = df[df['assay type'] == key]
@@ -100,4 +100,4 @@ for key, value in df['assay type'].value_counts().to_dict().items():
     plt.title(f'Assay type: {key}')
     plt.axline((0, 0), (1, 1), linewidth=0.5, color='k', linestyle = 'dashed')
     sns.scatterplot(data = df_subset, x = 'validation correlation enformer', y = 'validation correlation')
-    plt.savefig(f'/exports/humgen/idenhond/projects/enformer/correlation/Plots/dnn_head/own_output_pretrainedmodel_scatterplot_valid_enformer_corr_{key}.png', bbox_inches='tight')
+    plt.savefig(f'/exports/humgen/idenhond/projects/enformer/correlation/Plots/dnn_head/dnn_head_pretrainedmodel_scatterplot_valid_enformer_corr_{key}.png', bbox_inches='tight')
