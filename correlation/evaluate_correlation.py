@@ -83,7 +83,10 @@ class BasenjiDataSet(torch.utils.data.IterableDataset):
     path_to_tfr_records = os.path.join(
         cls.get_organism_path(organism), 'tfrecords', f'{subset}-*.tfr'
       )
-    path_to_tfr_records = f'/exports/humgen/idenhond/data/Basenji/tfrecords/{subset}-*.tfr'
+    if subset == 'train':
+      path_to_tfr_records = f'/exports/archive/hg-funcgenom-research/idenhond/Basenji/tfrecords/{subset}-*.tfr'
+    else: 
+      path_to_tfr_records = f'/exports/humgen/idenhond/data/Basenji/tfrecords/{subset}-*.tfr'
     return sorted(tf.io.gfile.glob(path_to_tfr_records), key=lambda x: int(x.split('-')[-1].split('.')[0]))
   
   @property
@@ -203,10 +206,10 @@ def compute_correlation(model, organism:str="human", subset:str=subset, max_step
   print(f'final shape corr coef compute: {compu.shape} ')
   print(f'the mean correlation coefficient for {organism} {subset} sequences calculated over {n_steps} sequence-target sets is {corr_coef.compute().mean()}')
 
-  # t_np = compu.numpy()
-  # print(t_np.shape)
-  # df = pd.DataFrame(t_np)
-  # df.to_csv(f"/exports/humgen/idenhond/data/evaluate_correlation/correlation_per_track_{subset}.csv",index=True)
+  t_np = compu.numpy()
+  print(t_np.shape)
+  df = pd.DataFrame(t_np)
+  df.to_csv(f"/exports/humgen/idenhond/data/evaluate_correlation/correlation_per_track_{subset}.csv",index=True)
   return corr_coef.compute().mean()
 
 a = compute_correlation(model, organism="human", subset=subset, max_steps=max_steps)

@@ -1,8 +1,8 @@
 #!/bin/bash
 #SBATCH --mail-type=END,FAIL
 #SBATCH --mail-user=icdenhond@gmail.com
-#SBATCH --time=04:00:00
-#SBATCH --partition=gpu
+#SBATCH --time=24:00:00
+#SBATCH --partition=highmemgpu
 #SBATCH --gres=gpu:1
 #SBATCH --mem=40G
 #SBATCH --output=Reports/%j.%x.out
