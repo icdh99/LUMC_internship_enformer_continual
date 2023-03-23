@@ -51,10 +51,10 @@ class model(pl.LightningModule):
 		x, y = batch
 		return self(x), y
 	
-	def validation_epoch_end(self, out):
-		gathered = self.all_gather(out)
-		if self.global_rank == 0:
-			print(0)
-		# calculate correlation for validaton sequences at the end of each epoch
-		self.logger.experiment(add_scalars('correlation'), self.global_step)
-		return None
+	# def validation_epoch_end(self, out):
+	# 	gathered = self.all_gather(out)
+	# 	if self.global_rank == 0:
+	# 		print(0)
+	# 	# calculate correlation for validaton sequences at the end of each epoch
+	# 	self.logger.experiment(add_scalars('correlation'), self.global_step)
+	# 	return None

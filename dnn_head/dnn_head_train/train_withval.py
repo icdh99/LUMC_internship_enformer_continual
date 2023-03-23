@@ -22,7 +22,7 @@ def main():
 
     BATCH_SIZE = 64
     EPOCHS = 20
-    NUM_WORKERS = 2
+    NUM_WORKERS = 12
     strategy = 'ddp_find_unused_parameters_false'
 
     print(f'parameters: \n batch size: {BATCH_SIZE} \n max epochs: {EPOCHS} \n strategy: {strategy} \n num workers: {NUM_WORKERS}\n')
@@ -58,14 +58,14 @@ def main():
     print(f'folder where model is stored: ./model_{date_time}')
 
     # tensorboard logger
-    logger = TensorBoardLogger('tb_logs', name = 'test_ddp_1503')
-    print('tb logs folder: tb_logs/test_ddp_1503')
+    logger = TensorBoardLogger('tb_logs', name = 'train_dnn_head_2303')
+    print('tb logs folder: tb_logs/train_dnn_head_2303')
     print(f'logger version: {logger.version}\n')
 
     # define callbacks 
     early_stop_callback = EarlyStopping(monitor="val_loss", 
-                                                min_delta=0.00, 
-                                                patience=5, verbose=False, mode="min")
+                                                min_delta=0.001, 
+                                                patience=2, verbose=True, mode="min")
 
     modelcheckpoint = ModelCheckpoint(monitor = 'val_loss', 
                                     mode = 'min', 
@@ -86,6 +86,13 @@ def main():
                         precision = 16,
                         strategy=strategy) 
     trainer.fit(clf, training_generator, val_generator)
+
+    # save model for inference
+    # torch.save(model.state_dict(), 'models')
+
+    #Later to restore:
+    # model.load_state_dict(torch.load(filepath))
+    # model.eval()
 
     print(f'Time after fit: {datetime.now() - start}\n') 
 

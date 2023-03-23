@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --mail-type=END,FAIL
 #SBATCH --mail-user=icdenhond@gmail.com
-#SBATCH --time=10-00:00:00
+#SBATCH --time=4-00:00:00
 #SBATCH --partition=highmemgpu
 #SBATCH --gres=gpu:2
 #SBATCH --ntasks-per-node=2
