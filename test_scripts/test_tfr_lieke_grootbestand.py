@@ -8,7 +8,8 @@ import torch
 # select tensorflow records for test sequences
 # tfr_path = '/exports/humgen/idenhond/Basenji_data/tfrecords/test*.tfr'
 # tfr_files = natsorted(glob.glob(tfr_path))
-tfr_path = '/exports/humgen/idenhond/data/Enformer_test/tensors_test/output_*.pt'
+# tfr_path = '/exports/humgen/idenhond/data/Enformer_test/tensors_test/output_*.pt'
+tfr_path = '/exports/humgen/idenhond/data/Basenji/tfrecords/*.tfr'
 tfr_files = natsorted(glob.glob(tfr_path))
 # tfr_file = '/exports/humgen/idenhond/data/Enformer_test/Enformer_test_output/output_test.pt'
 print(tfr_files)
