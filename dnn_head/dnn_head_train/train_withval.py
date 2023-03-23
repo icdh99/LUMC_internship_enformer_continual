@@ -22,7 +22,7 @@ def main():
 
     BATCH_SIZE = 64
     EPOCHS = 20
-    NUM_WORKERS = 12
+    NUM_WORKERS = 4
     strategy = 'ddp_find_unused_parameters_false'
 
     print(f'parameters: \n batch size: {BATCH_SIZE} \n max epochs: {EPOCHS} \n strategy: {strategy} \n num workers: {NUM_WORKERS}\n')
