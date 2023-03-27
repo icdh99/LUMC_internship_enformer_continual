@@ -30,15 +30,15 @@ if subset == 'test':
   print('you have said test')
   # tfr_file = f'/exports/humgen/idenhond/data/Enformer_test/Enformer_test_output_newmodel/output_test.pt'
   tfr_file = f'/exports/archive/hg-funcgenom-research/idenhond/Enformer_test/Enformer_test_embeddings_newmodel/embeddings_test_pretrainedmodel.pt'
-if subset == 'valid':
-  print('you have said valid')
-  tfr_file = f'/exports/archive/hg-funcgenom-research/idenhond/Enformer_validation/Enformer_validation_embeddings_newmodel/embeddings_validation_pretrainedmodel.pt'
-  # tfr_file = f'/exports/humgen/idenhond/data/Enformer_validation/output_validation.pt'
+    
+  tensor_out = torch.load(tfr_file, map_location=torch.device(device)) 
+  print(f'device of output tensor: {tensor_out.device}')
+  print(f'shape of output tensor: {tensor_out.shape}\n')
 
-  
-# tensor_out = torch.load(tfr_file, map_location=torch.device(device)) 
-# print(f'device of output tensor: {tensor_out.device}')
-# print(f'shape of output tensor: {tensor_out.shape}\n')
+# if subset == 'valid':
+#   print('you have said valid')
+#   tfr_file = f'/exports/archive/hg-funcgenom-research/idenhond/Enformer_validation/Enformer_validation_embeddings_newmodel/embeddings_validation_pretrainedmodel.pt'
+#   # tfr_file = f'/exports/humgen/idenhond/data/Enformer_validation/output_validation.pt'
 
 print(f'Time after loading output tensor: {datetime.now() - start}') 
 
@@ -250,13 +250,14 @@ class BasenjiDataSet(torch.utils.data.IterableDataset):
 # model = model.eval().cuda()
 
 # load model
-path = '/exports/humgen/idenhond/projects/enformer/dnn_head/dnn_head_train/model_2023-03-10 17:52:03.039827_v3/epoch=19-step=5320-val_loss=0.8.ckpt'
+# path = '/exports/humgen/idenhond/projects/enformer/dnn_head/dnn_head_train/model_2023-03-10 17:52:03.039827_v3/epoch=19-step=5320-val_loss=0.8.ckpt'
+path = '/exports/humgen/idenhond/projects/enformer/dnn_head/dnn_head_train/model_2023-03-23 09:36:14.367136/epoch=18-step=5054-val_loss=0.8.ckpt'  # retrain dnn head, finished on 27/3
+print(path)
 model = model.load_from_checkpoint(path)
 model.eval().cuda()
 
 print(f'Time after loading model: {datetime.now() - start}') 
 
-# def compute_correlation(model, organism:str="human", subset:str="valid", max_steps=-1):
 def compute_correlation(model, organism:str="human", subset:str=subset, max_steps=max_steps):
   print(f'organism: {organism}')
   print(f'subset: {subset}')
@@ -272,43 +273,33 @@ def compute_correlation(model, organism:str="human", subset:str=subset, max_step
   for i,batch in enumerate(tqdm(dl, total=n_steps)):
     if max_steps > 0 and i >= max_steps:
       break
+    
     batch_gpu = {k:v.to(model.device) for k,v in batch.items()}
     sequence = batch_gpu['sequence']
-    # print(f'sequence type: {type(sequence)}')
-    # print(f'sequence shape: {sequence.shape}') # torch.Size([1, 196608, 4])
-    # print(f'sequence device: {sequence.device}')
     target = batch_gpu['target']
-    # print(f'target type: {type(target)}')
-    # print(f'target shape: {target.shape}')  # torch.Size([1, 896, 5313])
-    # print(f'target device: {target.device}')
     with torch.no_grad():
-      tensor_out = torch.load(f'/exports/humgen/idenhond/data/Enformer_train/Enformer_train_embeddings_pretrainedmodel/embeddings_seq{i+1}.pt', map_location=torch.device(device))
-      seq_emb = torch.unsqueeze(tensor_out, 0)
-      # pred = model(seq_emb)[organism]
-      pred = model(seq_emb)
-      # print(f'pred type: {type(pred)}')
-      # print(f'pred shape: {pred.shape}')  # torch.Size([1, 896, 5313])
-      # print(f'pred device: {pred.device}')
+      if subset == 'train': emb = torch.load(f'/exports/humgen/idenhond/data/Enformer_train/Enformer_train_embeddings_pretrainedmodel/embeddings_seq{i+1}.pt', map_location=torch.device(device))
+      if subset == 'test': emb = tensor_out[i] 
+      if subset == 'valid': emb = torch.load(f'/exports/humgen/idenhond/data/Enformer_validation/Enformer_validation_embeddings_pretrainedmodel_perseq/embeddings_seq{i+1}.pt', map_location=torch.device(device))
+      pred1 = model(emb)
+      pred = torch.unsqueeze(pred1, 0)
+      if subset == 'train': torch.save(pred, f'/exports/humgen/idenhond/data/Enformer_train/Enformer_train_output_dnnhead_retrain2703/output_seq{i+1}.pt')
+      if subset == 'test': torch.save(pred, f'/exports/humgen/idenhond/data/Enformer_test/Enformer_test_output_dnnhead_retrain2703/output_seq{i+1}.pt')
+      if subset == 'valid': torch.save(pred, f'/exports/humgen/idenhond/data/Enformer_validation/Enformer_validation_output_dnnhead_retrain2703/output_seq{i+1}.pt')
 
-      # print(f'is predicted tensor equal to output tensor: {torch.equal(tensor_out_one, pred.cpu())}')
       corr_coef(preds=pred.cpu(), target=target.cpu())
+      print(i)
 
-      # compu = corr_coef.compute()
-      # print(f'{i} corr coef compute: {compu}')
-      # print(f'{i} shape corr coef compute: {compu.shape} ')
-
-  
   compu = corr_coef.compute()
   print(f'final corr coef compute: {compu}')
   print(f'final shape corr coef compute: {compu.shape} ')
-  # print(f'the mean correlation coefficient for {organism} {subset} sequences calculated over {n_steps} sequence-target sets is {corr_coef.compute().mean()}')
-  print(f'shape mean correlation coefficient: {corr_coef.compute().mean().shape}')
+#   print(f'shape mean correlation coefficient: {corr_coef.compute().mean().shape}')
 
-  # DIT IS NU HELEMAAL OVERSCHREVEN
+#   # BESTANDSNAAM AANPASSEN
   t_np = compu.numpy()
   print(t_np.shape)
   df = pd.DataFrame(t_np)
-  df.to_csv(f"/exports/humgen/idenhond/data/evaluate_correlation/correlation_per_track_{subset}_dnn_head.csv",index=True)
+  df.to_csv(f"/exports/humgen/idenhond/data/evaluate_correlation/correlation_per_track_{subset}_dnn_head_retrain2703.csv",index=True)
   return corr_coef.compute().mean()
 
 a = compute_correlation(model, organism="human", subset=subset, max_steps=max_steps)

@@ -62,7 +62,6 @@ for subset in ['train', 'test', 'validation']:
     plt.savefig(f'/exports/humgen/idenhond/projects/enformer/correlation/Plots/dnn_head_vs_enformer/scatterplot_{subset}_enformer_assaytype.png', bbox_inches='tight')
     plt.close()
 
-
 for subset in ['train', 'test', 'validation']:
     for key, value in df['assay type split ChIP'].value_counts().to_dict().items():
         df_subset = df[df['assay type split ChIP'] == key]
