@@ -23,6 +23,7 @@
 **.ckpt
 **.pyc
 **.nl
-dnn_head/train_newtracks_2703/tb_logs/dnnhead_newtracks_2703/version_0/events.out.tfevents.1679906206.res-hpc-gpu02.researchlumc.nl.2159742.0
-dnn_head/train_newtracks_2703/tb_logs/dnnhead_newtracks_2703/version_0/loss_train/events.out.tfevents.1679906307.res-hpc-gpu02.researchlumc.nl.2159742.2
-dnn_head/train_newtracks_2703/tb_logs/dnnhead_newtracks_2703/version_0/loss_valid/events.out.tfevents.1679906264.res-hpc-gpu02.researchlumc.nl.2159742.1
+**.0
+**.1
+**.2
+
