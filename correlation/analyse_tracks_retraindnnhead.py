@@ -23,6 +23,9 @@ df_correlation_test_enformer = pd.read_csv('/exports/humgen/idenhond/data/evalua
 df_correlation_valid_old = pd.read_csv('/exports/humgen/idenhond/data/evaluate_correlation/correlation_per_track_valid_dnn_head.csv', index_col = 0, names = ['correlation valid old']).tail(-1)
 df_correlation_valid_new = pd.read_csv('/exports/humgen/idenhond/data/evaluate_correlation/correlation_per_track_valid_dnn_head_retrain2703.csv', index_col = 0, names = ['correlation valid new']).tail(-1)
 df_correlation_valid_enformer = pd.read_csv('/exports/humgen/idenhond/data/evaluate_correlation/correlation_per_track_valid_own_output_pretrainedmodel.csv', index_col = 0, names = ['correlation valid enformer']).tail(-1)
+df_correlation_train_old = pd.read_csv('/exports/humgen/idenhond/data/evaluate_correlation/correlation_per_track_train_dnn_head.csv', index_col = 0, names = ['correlation train old']).tail(-1)
+df_correlation_train_new = pd.read_csv('/exports/humgen/idenhond/data/evaluate_correlation/correlation_per_track_train_dnn_head_retrain2703.csv', index_col = 0, names = ['correlation train new']).tail(-1)
+df_correlation_train_enformer = pd.read_csv('/exports/humgen/idenhond/data/evaluate_correlation/correlation_per_track_train.csv', index_col = 0, names = ['correlation train enformer']).tail(-1)
 
 df['test correlation old'] = df_correlation_test_old['correlation test old']
 df['test correlation new'] = df_correlation_test_new['correlation test new']
@@ -32,10 +35,14 @@ df['valid correlation old'] = df_correlation_valid_old['correlation valid old']
 df['valid correlation new'] = df_correlation_valid_new['correlation valid new']
 df['valid correlation enformer'] = df_correlation_valid_enformer['correlation valid enformer']
 
+df['train correlation old'] = df_correlation_train_old['correlation train old']
+df['train correlation new'] = df_correlation_train_new['correlation train new']
+df['train correlation enformer'] = df_correlation_train_enformer['correlation train enformer']
+
 print(df)
 
 
-for subset in ['test', 'valid']:
+for subset in ['test', 'valid', 'train']:
     plt.figure()
     plt.axline((0, 0), (1, 1), linewidth=0.5, color='k', linestyle = 'dashed')
     sns.scatterplot(data = df, x = f'{subset} correlation old', y = f'{subset} correlation new', hue = 'assay type split ChIP')
@@ -44,7 +51,7 @@ for subset in ['test', 'valid']:
     plt.close()
 
 
-for subset in ['test', 'valid']:
+for subset in ['test', 'valid', 'train']:
     for key, value in df['assay type split ChIP'].value_counts().to_dict().items():
         df_subset = df[df['assay type split ChIP'] == key]
         plt.figure()
