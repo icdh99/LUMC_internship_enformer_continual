@@ -17,13 +17,39 @@ print(f"Number of trakcs per assay type: \n {df['assay type'].value_counts()}\n"
 df_correlation_test = pd.read_csv('/exports/humgen/idenhond/data/evaluate_correlation/correlation_per_track_test_dnn_head_newtracks.csv', index_col = 0, names = ['correlation test']).tail(-1)
 df_correlation_valid = pd.read_csv('/exports/humgen/idenhond/data/evaluate_correlation/correlation_per_track_valid_dnn_head_newtracks.csv', index_col = 0, names = ['correlation valid']).tail(-1)
 df_correlation_train = pd.read_csv('/exports/humgen/idenhond/data/evaluate_correlation/correlation_per_track_train_dnn_head_newtracks.csv', index_col = 0, names = ['correlation train']).tail(-1)
+df_correlation_test_alltracksmodel = pd.read_csv('/exports/humgen/idenhond/data/evaluate_correlation/correlation_per_track_test_dnn_head_alltracks.csv', index_col = 0, names = ['correlation test all tracks model']).tail(-1)
+df_correlation_test_alltracksmodel = df_correlation_test_alltracksmodel.tail(19).reset_index()
 
 df['test correlation'] = df_correlation_test['correlation test']
-df['valid correlation'] = df_correlation_valid['correlation valid']
-df['train correlation'] = df_correlation_train['correlation train']
+df['test correlation all tracks model'] = df_correlation_test_alltracksmodel['correlation test all tracks model']
+# df['valid correlation'] = df_correlation_valid['correlation valid']
+# df['train correlation'] = df_correlation_train['correlation train']
+
+print(f'mean correlation score test: {df["test correlation"].mean(axis=0):.4f}')
+print(f'mean correlation score test all tracks model: {df["test correlation all tracks model"].mean(axis=0):.4f}')
 
 print(df)
 
+plt.figure(1)
+ax = sns.boxplot(data = df[[ 'test correlation all tracks model', 'test correlation']], showmeans = True)
+ax.set_xticklabels(['All tracks model', 'New tracks model'])
+plt.ylabel('Pearson Correlation Coefficient')
+plt.title(f'Test set correlation for 19 tracks')
+plt.savefig('/exports/humgen/idenhond/projects/enformer/correlation/Plots/dnn_newtracks/dnn_newtracks_boxplot_test_newvsall_corr.png', bbox_inches='tight')
+
+for key, value in df['assay type'].value_counts().to_dict().items():
+    df_subset = df[df['assay type'] == key]
+    print(key, value)
+    plt.figure()
+    plt.title(f'Assay type: {key}')
+    plt.axline((0, 0), (1, 1), linewidth=0.5, color='k', linestyle = 'dashed')
+    sns.scatterplot(data = df_subset, x = 'test correlation', y = 'test correlation all tracks model', color = 'k')
+    plt.ylabel('Test correlation new tracks model')
+    plt.xlabel('Test correlation all tracks model')
+    plt.savefig(f'/exports/humgen/idenhond/projects/enformer/correlation/Plots/dnn_newtracks/dnn_newtracks_scatterplot_test_corr_newvsall_{key}.png', bbox_inches='tight')
+
+
+exit()
 plt.figure(1)
 sns.boxplot(data = df[['test correlation', 'valid correlation', 'train correlation']], showmeans = True)
     # boxplot for multiple numerical columns

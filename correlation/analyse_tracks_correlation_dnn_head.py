@@ -6,8 +6,19 @@ input_file = '/exports/humgen/idenhond/data/Basenji/human-targets.txt'
 df = pd.read_csv(input_file, sep = '\t')
 df[['assay type', 'description2']] = df.description.str.split(':', n = 1, expand = True) # make new column for assay type
 
+def f(row):
+    if row['assay type'] == 'CHIP':
+        if any(row['description2'].startswith(x) for x in ['H2AK', 'H2BK', 'H3K', 'H4K']): val = 'ChIP Histone'
+        else: val = 'ChIP TF'
+    elif row['assay type'] == 'DNASE' or row['assay type'] == 'ATAC': val = 'DNASE/ATAC'
+    else: val = row['assay type']
+    return val
+df['assay type split ChIP'] = df.apply(f, axis=1)
+
 print(f'Number of tracks: {df.shape[0]}\n')
 print(f"Number of trakcs per assay type: \n {df['assay type'].value_counts()}")
+print(f"Number of trakcs per assay type: \n {df['assay type split ChIP'].value_counts()}")
+
 
 # select 10 tracks with highest test correlation score
     # TODO ..... 
@@ -46,41 +57,48 @@ print(f'mean correlation score test dnn head: {df["test correlation"].mean(axis=
 print(f'mean correlation score validation dnn head: {df["validation correlation"].mean(axis=0):.4f}')
 print(f'mean correlation score train dnn head: {df["train correlation"].mean(axis=0):.4f}')
 
-plt.figure(1)
-sns.boxplot(data = df[['test correlation', 'test correlation enformer']], showmeans = True)
-plt.ylabel('Pearson Correlation Coefficient')
-plt.savefig('/exports/humgen/idenhond/projects/enformer/correlation/Plots/dnn_head/dnn_head_boxplot_test_vsenformer_corr.png', bbox_inches='tight')
+# plt.figure(1)
+# sns.boxplot(data = df[['test correlation', 'test correlation enformer']], showmeans = True)
+# plt.ylabel('Pearson Correlation Coefficient')
+# plt.savefig('/exports/humgen/idenhond/projects/enformer/correlation/Plots/dnn_head/dnn_head_boxplot_test_vsenformer_corr.png', bbox_inches='tight')
 
-plt.figure(2)
-sns.boxplot(data = df[['validation correlation', 'validation correlation enformer']], showmeans = True)
-plt.ylabel('Pearson Correlation Coefficient')
-plt.savefig('/exports/humgen/idenhond/projects/enformer/correlation/Plots/dnn_head/dnn_head_boxplot_valid_vsenformer_corr.png', bbox_inches='tight')
+# plt.figure(2)
+# sns.boxplot(data = df[['validation correlation', 'validation correlation enformer']], showmeans = True)
+# plt.ylabel('Pearson Correlation Coefficient')
+# plt.savefig('/exports/humgen/idenhond/projects/enformer/correlation/Plots/dnn_head/dnn_head_boxplot_valid_vsenformer_corr.png', bbox_inches='tight')
 
-plt.figure(3)
-sns.boxplot(data = df[['train correlation', 'train correlation enformer']], showmeans = True)
-plt.ylabel('Pearson Correlation Coefficient')
-plt.savefig('/exports/humgen/idenhond/projects/enformer/correlation/Plots/dnn_head/dnn_head_boxplot_train_vsenformer_corr.png', bbox_inches='tight')
+# plt.figure(3)
+# sns.boxplot(data = df[['train correlation', 'train correlation enformer']], showmeans = True)
+# plt.ylabel('Pearson Correlation Coefficient')
+# plt.savefig('/exports/humgen/idenhond/projects/enformer/correlation/Plots/dnn_head/dnn_head_boxplot_train_vsenformer_corr.png', bbox_inches='tight')
 
-plt.figure(4)
-sns.boxplot(data = df[['test correlation', 'validation correlation']], showmeans = True)
-plt.ylabel('Pearson Correlation Coefficient')
-plt.savefig('/exports/humgen/idenhond/projects/enformer/correlation/Plots/dnn_head/dnn_head_boxplot_test_valid_corr.png', bbox_inches='tight')
+# plt.figure(4)
+# sns.boxplot(data = df[['test correlation', 'validation correlation']], showmeans = True)
+# plt.ylabel('Pearson Correlation Coefficient')
+# plt.savefig('/exports/humgen/idenhond/projects/enformer/correlation/Plots/dnn_head/dnn_head_boxplot_test_valid_corr.png', bbox_inches='tight')
 
-plt.figure(5)
-sns.boxplot(data = df[['train correlation', 'test correlation']], showmeans = True)
-plt.ylabel('Pearson Correlation Coefficient')
-plt.savefig('/exports/humgen/idenhond/projects/enformer/correlation/Plots/dnn_head/dnn_head_boxplot_test_train_corr.png', bbox_inches='tight')
+# plt.figure(5)
+# sns.boxplot(data = df[['train correlation', 'test correlation']], showmeans = True)
+# plt.ylabel('Pearson Correlation Coefficient')
+# plt.savefig('/exports/humgen/idenhond/projects/enformer/correlation/Plots/dnn_head/dnn_head_boxplot_test_train_corr.png', bbox_inches='tight')
 
-plt.figure(6)
-plt.axline((0, 0), (1, 1), linewidth=0.5, color='k', linestyle = 'dashed')
-sns.scatterplot(data = df, x = 'test correlation enformer', y = 'test correlation')
-plt.savefig('/exports/humgen/idenhond/projects/enformer/correlation/Plots/dnn_head/dnn_head_scatterplot_test_enformer_corr.png', bbox_inches='tight')
+# plt.figure(6)
+# plt.axline((0, 0), (1, 1), linewidth=0.5, color='k', linestyle = 'dashed')
+# sns.scatterplot(data = df, x = 'test correlation enformer', y = 'test correlation')
+# plt.savefig('/exports/humgen/idenhond/projects/enformer/correlation/Plots/dnn_head/dnn_head_scatterplot_test_enformer_corr.png', bbox_inches='tight')
+
+# plt.figure(7)
+# plt.axline((0, 0), (1, 1), linewidth=0.5, color='k', linestyle = 'dashed')
+# sns.scatterplot(data = df, x = 'test correlation enformer', y = 'test correlation', hue = 'assay type')
+# plt.savefig('/exports/humgen/idenhond/projects/enformer/correlation/Plots/dnn_head/dnn_head_scatterplot_test_enformer_corr_asssaytype.png', bbox_inches='tight')
 
 plt.figure(7)
 plt.axline((0, 0), (1, 1), linewidth=0.5, color='k', linestyle = 'dashed')
-sns.scatterplot(data = df, x = 'test correlation enformer', y = 'test correlation', hue = 'assay type')
-plt.savefig('/exports/humgen/idenhond/projects/enformer/correlation/Plots/dnn_head/dnn_head_scatterplot_test_enformer_corr_asssaytype.png', bbox_inches='tight')
+sns.scatterplot(data = df, x = 'test correlation enformer', y = 'test correlation', hue = 'assay type split ChIP')
+plt.legend(bbox_to_anchor=(1.04, 1), loc="upper left")
+plt.savefig('/exports/humgen/idenhond/projects/enformer/correlation/Plots/dnn_head/dnn_head_scatterplot_test_enformer_corr_asssaytypechip.png', bbox_inches='tight')
 
+exit()
 plt.figure(8)
 plt.axline((0, 0), (1, 1), linewidth=0.5, color='k', linestyle = 'dashed')
 sns.scatterplot(data = df, x = 'validation correlation enformer', y = 'validation correlation')

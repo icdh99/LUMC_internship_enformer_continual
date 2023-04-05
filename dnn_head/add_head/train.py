@@ -137,10 +137,10 @@ class NewHead(nn.Module):
         return x
 
 class CombinedModel(pl.LightningModule):
-    def __init__(self, original_model, new_head):
+    def __init__(self, original_model):
         super().__init__()
         self.original_model = original_model
-        self.new_head = new_head
+        self.new_head = NewHead()
         self.lr = 1e-4
         self.loss = nn.PoissonNLLLoss()
         self.save_hyperparameters()
@@ -237,22 +237,13 @@ def main():
 
     callbacks = [RichProgressBar(), early_stop_callback, modelcheckpoint]
 
-    # clf = model()
-
     original_model = OriginalModel.load_from_checkpoint('/exports/humgen/idenhond/projects/enformer/dnn_head/dnn_head_train/model_2023-03-10 17:52:03.039827_v3/epoch=19-step=5320-val_loss=0.8.ckpt')
+
     for param in original_model.parameters(): 
         param.requires_grad = False
     new_head = NewHead()
 
-    combined_model = CombinedModel(original_model, new_head)
-
-    # load existing model
-
-    # freeze weigths of existing model
-
-    # create a combined model
-
-    # trainer + fit combined model
+    combined_model = CombinedModel(original_model)
 
     trainer = pl.Trainer(max_epochs = EPOCHS, 
                         callbacks = callbacks, 
@@ -263,14 +254,8 @@ def main():
                         devices = 2, 
                         precision = 16,
                         strategy=strategy) 
+    
     trainer.fit(combined_model, training_generator, val_generator)
-
-    # save model for inference
-    # torch.save(model.state_dict(), 'models')
-
-    #Later to restore:
-    # model.load_state_dict(torch.load(filepath))
-    # model.eval()
 
     print(f'Time after fit: {datetime.now() - start}\n') 
 
