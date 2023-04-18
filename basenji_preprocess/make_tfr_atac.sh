@@ -23,7 +23,7 @@ txt_file=/exports/humgen/idenhond/data/basenji_preprocess/targets_snatac_mouse.t
 /exports/humgen/idenhond/basenji_dev/basenji/bin/basenji_data.py -g $bed_file -b $blacklist -u $unmappable -l 131072 --local --restart --crop 8192 -o $output_dir -p 8 -w 128 $genome $txt_file
 
 # python inspect_tfr.py
-
+# sdfadsf
 
 # txt_file=/exports/humgen/idenhond/data/basenji_preprocess/targets_prep.txt
 # txt_file=/exports/humgen/idenhond/data/basenji_preprocess/target_ENCFF601VTB_ENCFF914YXU.txt
