@@ -95,7 +95,10 @@ print(f'mean correlation score train dnn head: {df["train correlation"].mean(axi
 plt.figure(7)
 plt.axline((0, 0), (1, 1), linewidth=0.5, color='k', linestyle = 'dashed')
 sns.scatterplot(data = df, x = 'test correlation enformer', y = 'test correlation', hue = 'assay type split ChIP')
-plt.legend(bbox_to_anchor=(1.04, 1), loc="upper left")
+plt.legend(bbox_to_anchor=(1.04, 1), loc="upper left", title = 'Assay type')
+# plt.legend(bbox_to_anchor=(0, 1.02, 1, 0.2), loc="lower left", title = 'Assay type', ncols = 4, mode = 'expand')
+plt.xlabel('Pearson correlation (Enformer model)')
+plt.ylabel('Pearson correlation (Our model)')
 plt.savefig('/exports/humgen/idenhond/projects/enformer/correlation/Plots/dnn_head/dnn_head_scatterplot_test_enformer_corr_asssaytypechip.png', bbox_inches='tight')
 
 exit()
