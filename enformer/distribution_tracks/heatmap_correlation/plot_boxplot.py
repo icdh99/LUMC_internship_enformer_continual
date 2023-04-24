@@ -47,14 +47,23 @@ def f(row):
     elif row['assay type'] == 'DNASE' or row['assay type'] == 'ATAC': val = 'DNASE_ATAC'
     else: val = row['assay type']
     return val
+def g(row):
+    if row['assay type'] == 'CHIP':
+        if any(row['description2'].startswith(x) for x in ['H2AK', 'H2BK', 'H3K', 'H4K']): val = 'ChIP Histone'
+        else: val = 'ChIP TF'
+    # elif row['assay type'] == 'DNASE' or row['assay type'] == 'ATAC': val = 'DNASE_ATAC'
+    else: val = row['assay type']
+    return val
+
 df_targets['assay type split ChIP'] = df_targets.apply(f, axis=1)
+df_targets['assay type split 5'] = df_targets.apply(g, axis = 1)
 print(df_targets)
 
 for i, file_name in enumerate(filenames):
     if i < num_files:
         df = pd.read_csv(file_name, header = None, names = ['value'])
         
-        df['assay type'] = df_targets['assay type split ChIP']
+        df['assay type'] = df_targets['assay type split 5']
         print(df)
         data = df['value']
         
@@ -86,4 +95,4 @@ fig.delaxes(axes[-1])
 plt.tight_layout()
 plt.xlim(-0.01, 0.01)
 # plt.legend()
-plt.savefig('boxplot_correlationnewvsol_assaytype.png')
+plt.savefig('boxplot_correlationnewvsol_assaytype_5.png')

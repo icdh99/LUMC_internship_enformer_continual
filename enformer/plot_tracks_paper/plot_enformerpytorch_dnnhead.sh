@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --mail-type=START,END,FAIL
 #SBATCH --mail-user=icdenhond@gmail.com
-#SBATCH --partition=gpu
+#SBATCH --partition=highmemgpu
 #SBATCH --gres=gpu:1
 #SBATCH --time=01:00:00
 #SBATCH --mem=20G

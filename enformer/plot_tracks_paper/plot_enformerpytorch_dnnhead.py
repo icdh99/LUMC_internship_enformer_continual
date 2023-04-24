@@ -119,14 +119,14 @@ emb = emb.cuda()
 pred = model(emb)
 print(pred.shape)
 print(type(pred))
-pred = pred.detach().numpy().cpu()
+pred = pred.detach().cpu().numpy()
 
 
 def plot_tracks(tracks, interval, name, height=1.5):
   fig, axes = plt.subplots(len(tracks), 1, figsize=(20, height * len(tracks)), sharex=True)
   for ax, (title, y) in zip(axes, tracks.items()):
     # ax.fill_between(np.linspace(interval.start, interval.end, num=len(y)), y)
-    ax.fill_between(np.linspace(35082742, 35197430, num=len(y)), y, color = 'red')
+    ax.fill_between(np.linspace(35082742, 35197430, num=len(y)), y, color = 'black')
     # 35082742	35197430
     ax.set_title(title)
     sns.despine(top=True, right=True, bottom=True)
@@ -153,7 +153,7 @@ tracks = {'DNASE:CD14-positive monocyte female': pred[:, 41],
           'DNASE:keratinocyte female': pred[:, 42],
           'CHIP:H3K27ac:keratinocyte female': pred[:, 706],
           'CAGE:Keratinocyte - epidermal': np.log10(1 + pred[:, 4799])}
-figname = 'test_enformer_pytorchdnnhead_red'
+figname = 'test_enformer_pytorchdnnhead_black'
 
 plot_tracks(tracks, None, figname)
 
