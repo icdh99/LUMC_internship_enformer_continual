@@ -45,22 +45,31 @@ def get_target(subset = 'train'):
     # save to folder data/Enformer_train/Enformer_train_targets
     # targets = []
     for i, target in enumerate(dataset):
-        # target_np = target.numpy()
-        # print(type(target_np))
-        # print(target_np.shape)
+        # # target_np = target.numpy()
+        # # print(type(target_np))
+        # # print(target_np.shape)
+        # target_tensor = torch.from_numpy(target.numpy())
+        # # print(target_tensor.shape)
+        # new_tensor = torch.zeros(1,896,19)
+        # indices = [0, 1,2,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21]
+        # for x, j in enumerate(indices):
+        #     new_tensor[:,:,x] = target_tensor[:,:, j]
+
+        # # print(new_tensor.shape)
+
+        # # torch.save(new_tensor, f'/exports/humgen/idenhond/data/Enformer_validation/Enformer_validation_targets_newtracks2703/targets_seq{i+1}.pt')
+        # # torch.save(new_tensor, f'/exports/humgen/idenhond/data/Enformer_test/Enformer_test_targets_newtracks2703/targets_seq{i+1}.pt')
+        # torch.save(new_tensor, f'/exports/humgen/idenhond/data/Enformer_train/Enformer_train_targets_newtracks2703/targets_seq{i+1}.pt')
+        # hierboven was hoe je de targets voor de new tracks only hebt opgeslage (dus verkeerd, je moet 2,3,4 overslaan bij de indices en niet 3,4,5)
+
+        # nu hier: opslaan alleen oude targets uit de 22 tracks
         target_tensor = torch.from_numpy(target.numpy())
-        # print(target_tensor.shape)
-        new_tensor = torch.zeros(1,896,19)
-        indices = [0, 1,2,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21]
+        new_tensor = torch.zeros(1,896,3)
+        indices = [2,3,4]
         for x, j in enumerate(indices):
             new_tensor[:,:,x] = target_tensor[:,:, j]
 
-        # print(new_tensor.shape)
-
-        # torch.save(new_tensor, f'/exports/humgen/idenhond/data/Enformer_validation/Enformer_validation_targets_newtracks2703/targets_seq{i+1}.pt')
-        # torch.save(new_tensor, f'/exports/humgen/idenhond/data/Enformer_test/Enformer_test_targets_newtracks2703/targets_seq{i+1}.pt')
-        torch.save(new_tensor, f'/exports/humgen/idenhond/data/Enformer_train/Enformer_train_targets_newtracks2703/targets_seq{i+1}.pt')
-
+        torch.save(new_tensor, f'/exports/humgen/idenhond/data/Enformer_train/Enformer_train_3tracks_remade/targets_seq{i+1}.pt')
 
     return None
 
