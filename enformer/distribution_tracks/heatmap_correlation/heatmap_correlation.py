@@ -13,7 +13,7 @@ test set
 '''
 
 target_folder_oldtracks = '/exports/humgen/idenhond/data/Enformer_train/Enformer_train_targets'
-target_folder_newtracks = '/exports/humgen/idenhond/data/Enformer_test/Enformer_test_targets_newtracks2703'
+target_folder_newtracks = '/exports/humgen/idenhond/data/Enformer_train/Enformer_train_targets_newtracks2703'
 
 corr_matrix = np.zeros([5332, 5332])
 np.set_printoptions(linewidth=400)   
@@ -37,7 +37,7 @@ print(final_matrix)
 plt.subplots(figsize=(50,50))
 plt.imshow(final_matrix, cmap='hot')
 plt.colorbar(shrink=0.5)
-plt.savefig('heatmap_alltrackspng')
+plt.savefig('heatmap_alltracks_correct.png')
 exit()
 # pd.DataFrame(final_matrix).to_csv('heatmap_testset_newtracks.csv')
 
