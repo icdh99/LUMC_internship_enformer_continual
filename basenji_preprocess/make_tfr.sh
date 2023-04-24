@@ -16,11 +16,11 @@ echo 'Job folder: ' $SLURM_SUBMIT_DIR; echo
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/exports/humgen/idenhond/miniconda3/envs/basenji/lib 
 
 bed_file=/exports/humgen/idenhond/data/basenji_preprocess/unmap_macro.bed
-output_dir=/exports/humgen/idenhond/data/basenji_preprocess/output_tfr_newtracks_hardcode32
+output_dir=/exports/humgen/idenhond/data/basenji_preprocess/output_tfr_27newtracks_human
 genome=/exports/humgen/idenhond/genomes/hg38.ml.fa
 blacklist=/exports/humgen/idenhond/data/Basenji/hg38.blacklist.rep.bed
 unmappable=/exports/humgen/idenhond/data/Basenji/umap_k24_t10_l32.bed
-txt_file=/exports/humgen/idenhond/data/basenji_preprocess/target_march24.txt
+txt_file=/exports/humgen/idenhond/data/basenji_preprocess/target_2404.txt
 
 /exports/humgen/idenhond/basenji_dev/basenji/bin/basenji_data.py -g $bed_file -b $blacklist -u $unmappable -l 131072 --local --restart --crop 8192 -o $output_dir -p 8 -w 128 $genome $txt_file
 
