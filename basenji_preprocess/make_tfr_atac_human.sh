@@ -13,8 +13,10 @@ echo 'Job folder: ' $SLURM_SUBMIT_DIR; echo
 
 # NIET VERGETEN: CONDA ACTIVATE BASENJI !!!!!!! 
 
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/exports/humgen/idenhond/miniconda3/envs/basenji/lib 
+
 bed_file=/exports/humgen/idenhond/data/basenji_preprocess/unmap_macro.bed   #HUMAN
-output_dir=/exports/humgen/idenhond/data/basenji_preprocess/output_tfr_human_atac_scale2_clip32_mean # this folder should exist and contain the sequences.bed file
+output_dir=/exports/humgen/idenhond/data/basenji_preprocess/output_tfr_human_atac # this folder should exist and contain the sequences.bed file
 genome=/exports/humgen/idenhond/genomes/hg38.ml.fa
 blacklist=/exports/humgen/idenhond/data/Basenji/hg38.blacklist.rep.bed
 unmappable=/exports/humgen/idenhond/data/Basenji/umap_k24_t10_l32.bed #HUMAN
