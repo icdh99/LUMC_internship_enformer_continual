@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --mail-type=END,FAIL
+#SBATCH --mail-type=START,END,FAIL
 #SBATCH --mail-user=icdenhond@gmail.com
 #SBATCH --time=4-00:00:00
 #SBATCH --partition=gpu
@@ -8,10 +8,11 @@
 #SBATCH --nodes=1
 #SBATCH --mem=90G
 #SBATCH --output=./Reports/output.%x.%j.out
+#SBATCH --job-name=atac_train
 
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/exports/humgen/idenhond/miniconda3/envs/enformer_dev/lib 
 
-script=/exports/humgen/idenhond/projects/enformer/dnn_head/train_dnase/train_withval.py
+script=/exports/humgen/idenhond/projects/enformer/dnn_head/train_human_atac/train_withval.py
 
 echo 'Date: ' $(date)
 echo 'Script: ' $script
