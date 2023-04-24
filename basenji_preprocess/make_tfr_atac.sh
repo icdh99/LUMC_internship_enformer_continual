@@ -14,16 +14,16 @@ echo 'Job folder: ' $SLURM_SUBMIT_DIR; echo
 # NIET VERGETEN: CONDA ACTIVATE BASENJI !!!!!!! 
 
 bed_file=/exports/humgen/idenhond/data/basenji_preprocess/unmap_macro.bed   #HUMAN
-output_dir=/exports/humgen/idenhond/data/basenji_preprocess/output_tfr_mouse_snatac
+output_dir=/exports/humgen/idenhond/data/basenji_preprocess/output_tfr_mouse_snatac_scale1
 genome=/exports/humgen/idenhond/genomes/mm10.ml.fa
 blacklist=/exports/humgen/idenhond/data/Basenji/mouse/mm10.blacklist.rep.bed
 unmappable=/exports/humgen/idenhond/data/Basenji/umap_k24_t10_l32.bed   #HUMAN
-txt_file=/exports/humgen/idenhond/data/basenji_preprocess/targets_snatac_mouse.txt
+txt_file=/exports/humgen/idenhond/data/basenji_preprocess/targets_snatac_mouse_scale1.txt
 
 /exports/humgen/idenhond/basenji_dev/basenji/bin/basenji_data.py -g $bed_file -b $blacklist -u $unmappable -l 131072 --local --restart --crop 8192 -o $output_dir -p 8 -w 128 $genome $txt_file
 
 # python inspect_tfr.py
-# sdfadsf
+
 
 # txt_file=/exports/humgen/idenhond/data/basenji_preprocess/targets_prep.txt
 # txt_file=/exports/humgen/idenhond/data/basenji_preprocess/target_ENCFF601VTB_ENCFF914YXU.txt
