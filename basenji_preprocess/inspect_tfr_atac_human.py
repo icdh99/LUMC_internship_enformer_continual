@@ -37,7 +37,7 @@ def file_to_records(filename):
 
 
 def get_target():
-    tfr_path = f'/exports/humgen/idenhond/data/basenji_preprocess/output_tfr_human_atac_scale1/tfrecords/train-0.tfr'
+    tfr_path = f'/exports/humgen/idenhond/data/basenji_preprocess/output_tfr_human_atac/tfrecords/train-0.tfr'
     tfr_files = natsorted(glob.glob(tfr_path))
     print(f'number of tfr files: {len(tfr_files)}')
     print(tfr_files)
@@ -50,9 +50,17 @@ def get_target():
     for i, (target, sequence) in enumerate(dataset):
         print(i, target.shape)
         target = tf.squeeze(target)
-        print(target[:, 0]) # remove first dimension to get shape (896, 1)
-        plt.plot(target[:, 1], label = 'track 0')
-        plt.savefig(f'plots_human_atac/humanatac-train_seq{i+1}_track2.png')
+        # print(target[:, 0]) # remove first dimension to get shape (896, 1)
+        plt.figure(figsize=(12, 4))
+        plt.plot(target[:, 22], label = 'track 22')
+        plt.title(f'human atac tracks train-0.tfr seq{i+1} track 22 Human_ATAC_GABAergic')
+        plt.savefig(f'plots_human_atac/humanatac-train_seq{i+1}_track22_Human_ATAC_GABAergic.png')
+        plt.close()
+
+        plt.figure(figsize=(12, 4))
+        plt.plot(target[:, 55], label = 'track 22')
+        plt.title(f'human atac tracks train-0.tfr seq{i+1} track 55 Human_ATAC_Oligo')
+        plt.savefig(f'plots_human_atac/humanatac-train_seq{i+1}_track55_Human_ATAC_Oligo.png')
         plt.close()
         if i == 1:
             break
