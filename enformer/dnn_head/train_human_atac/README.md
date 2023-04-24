@@ -12,5 +12,11 @@ Example plots comparing the tensorflow records and the bw tracks in IGV are stor
 For my model training pipeline, the targets need to be stored in .pt format. 
 -- /exports/humgen/idenhond/projects/enformer/dnn_head/train_human_atac/store_target_as_tensor.sh
 
+*Model training*
+Train input: /exports/humgen/idenhond/data/Enformer_train/Enformer_train_embeddings_pretrainedmodel
+Validation input: /exports/humgen/idenhond/data/Enformer_validation/Enformer_validation_embeddings_pretrainedmodel_perseq
+Train targets: /exports/humgen/idenhond/data/Enformer_train/Human_ATAC_train_targets
+Validation targets: /exports/humgen/idenhond/data/Enformer_validation/Human_ATAC_validation_targets
+
 
 
