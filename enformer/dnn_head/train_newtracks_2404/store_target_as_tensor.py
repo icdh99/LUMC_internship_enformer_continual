@@ -29,10 +29,15 @@ def make_parser(): #, rna_mode
         'target': tf.io.FixedLenFeature([], dtype = tf.string),
         }
         feature_tensors = tf.io.parse_single_example(example_protos, features=feature_spec)
+
+        sequence = tf.io.decode_raw(feature_tensors['sequence'], tf.bool)
+        sequence = tf.reshape(sequence, (131072, 4))
+        sequence = tf.cast(sequence, tf.float32)
+
         target = tf.io.decode_raw(feature_tensors['target'], tf.float16)
         target = tf.reshape(target, (896, NUM_TRACKS))
         target = tf.cast(target, tf.float32)
-        return target
+        return target, sequence
     return parse_proto
 
 def file_to_records(filename):
@@ -51,8 +56,11 @@ def get_target(subset = subset):
     dataset = dataset.batch(1)
 
     # instead of adding targets to big array, save to seperate file in iteration
-    for i, target in enumerate(dataset):
+    # for i, target in enumerate(dataset):
+    for i, (target, sequence) in enumerate(dataset):
+        print(i)
         target_tensor = torch.from_numpy(target.numpy())
+        print(target_tensor.shape)
         torch.save(target_tensor, f'/exports/humgen/idenhond/data/Enformer_{subset}/Newtracks_2404_{subset}_targets/targets_seq{i+1}.pt')
     return None
 
