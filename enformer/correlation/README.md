@@ -33,3 +33,12 @@ TODO:
 - calculate correlation between model output + tensor flow record output
 - save correlation scores per track to csv file
 - analyse correlation scores
+
+25/4: evaluate_correlation_humanatac.py
+- use model trained on human ATAC-seq tracks to get predicted output for test, train and validation
+- calculate correlation between model output + tfr target
+
+25/4: evaluate_correlation_newtracks_2404.py
+- use model trained on 27 new tracks to get predicted output for test, train and validation
+- calculate correlation between model output + tfr target
+
