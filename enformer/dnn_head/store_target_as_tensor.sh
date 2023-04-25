@@ -4,7 +4,7 @@
 #SBATCH --time=10:00:00
 # SBATCH --partition=gpu
 # SBATCH --gres=gpu:1
-#SBATCH --mem=10G
+#SBATCH --mem=3G
 #SBATCH --output=./Reports/output.%x.%j.out
 
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/exports/humgen/idenhond/miniconda3/envs/enformer_dev/lib 
