@@ -43,6 +43,8 @@ def get_target(subset = subset):
         tfr_path = f'/exports/humgen/idenhond/data/basenji_preprocess/output_tfr_human_atac/tfrecords/valid*.tfr'
     if subset == 'train':
         tfr_path = f'/exports/humgen/idenhond/data/basenji_preprocess/output_tfr_human_atac/tfrecords/train*.tfr'
+    if subset == 'test':
+        tfr_path = f'/exports/humgen/idenhond/data/basenji_preprocess/output_tfr_human_atac/tfrecords/test*.tfr'
     
     tfr_files = natsorted(glob.glob(tfr_path))
     print(f'number of tfr files for {subset} subset: {len(tfr_files)}')
