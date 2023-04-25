@@ -24,7 +24,7 @@ echo 'Job folder: ' $SLURM_SUBMIT_DIR; echo
 # echo 'Requested GPU count per allocated node: ' $SLURM_GPUS_PER_NODE
 # echo 'Requested GPU count per allocated task: ' $SLURM_GPUS_PER_TASK
 
-# subset should be one of [train, validation]
+# subset should be one of [train, validation, test]
 subset=$1
 echo 'Subset: ' $subset
 python $script $subset

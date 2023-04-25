@@ -48,6 +48,8 @@ def get_target(subset = subset):
         tfr_path = f'/exports/humgen/idenhond/data/basenji_preprocess/output_tfr_27newtracks_human/tfrecords/train*.tfr'
     if subset == 'validation':
         tfr_path = f'/exports/humgen/idenhond/data/basenji_preprocess/output_tfr_27newtracks_human/tfrecords/valid*.tfr'
+    if subset == 'test':
+        tfr_path = f'/exports/humgen/idenhond/data/basenji_preprocess/output_tfr_27newtracks_human/tfrecords/test*.tfr'
     tfr_files = natsorted(glob.glob(tfr_path))
     print(f'number of tfr files for {subset} subset: {len(tfr_files)}')
     dataset = tf.data.Dataset.from_tensor_slices(tfr_files)
