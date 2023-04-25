@@ -6,7 +6,7 @@
 #SBATCH --gres=gpu:2
 #SBATCH --ntasks-per-node=2
 #SBATCH --nodes=1
-#SBATCH --mem=90G
+#SBATCH --mem=150G
 #SBATCH --output=./Reports/output.%x.%j.out
 #SBATCH --job-name=alltracks_train
 
