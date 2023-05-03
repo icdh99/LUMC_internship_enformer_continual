@@ -38,5 +38,16 @@ Train model on Human ATAC tracks
 Train model on 27 new tracks
 -- train_newtracks_2404
 
+24/4
+Train model on all new tracks (5313 tracks + 27 new tracks)
+-- train_alltracks_2404
+
+1/5
+Train model on normalized human atac tracks
+-- train_human_atac_normalized
+
+2/5
+Train model with more layers
+-- train_newtracks_newmodel_0205
 
 TODO: train model on 27 new tracks + all enformer tracks

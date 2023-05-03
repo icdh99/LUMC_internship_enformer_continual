@@ -1,0 +1,1 @@
+This folder contains some code to test the finetune function from the enformer-pytorch repository.

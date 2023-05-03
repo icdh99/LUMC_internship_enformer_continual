@@ -34,6 +34,15 @@ TODO:
 - save correlation scores per track to csv file
 - analyse correlation scores
 
+27/3: evaluate_correlation_dnn_head_newtracks.py
+- evaluate model trained on new tracks (19) on 27/3
+
+30/3: evaluate_correlation_dnn_head_alltracks.py
+- evaluate model trained on all tracks on 30/3
+
+31/3: evaluate_correlation_dnase.py
+- evaluate model trained on DNASE tracks only
+
 25/4: evaluate_correlation_humanatac.py
 - use model trained on human ATAC-seq tracks to get predicted output for test, train and validation
 - calculate correlation between model output + tfr target
@@ -42,3 +51,11 @@ TODO:
 - use model trained on 27 new tracks to get predicted output for test, train and validation
 - calculate correlation between model output + tfr target
 
+28/4: evaluate_correlation_alltracks_2404.py
+- evaluate model trained on all tracks 2404
+
+1/5: evaluate_correlation_humanatac_normalized.py
+- evaluate model trained on normalized human atac tracks (did not work)
+
+2/5: evaluate_correlation_newtracks_newmodel_0205.py
+- evaluate model with more layers trained on 27 new tracks
