@@ -16,4 +16,5 @@ echo 'Job ID: ' $SLURM_JOBID
 echo 'Output folder: ' Reports/$SLURM_JOBID.$SLURM_JOB_NAME.out
 echo 'Job folder: ' $SLURM_SUBMIT_DIR; echo 
 
-python $script
+# $1 = subset {train, test}
+python $script $1

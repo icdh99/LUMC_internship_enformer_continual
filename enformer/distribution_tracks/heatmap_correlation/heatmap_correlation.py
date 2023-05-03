@@ -4,45 +4,100 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import torch
 import os
+import sys
 
-'''
-test set
-1937 sequences
+subset = sys.argv[1]
+print(f'subset: {subset}')
 
-5313 + 19 = 5332 tracks
-'''
+if subset == 'test':
+    ## all tracks test set targets
+    target_folder_oldtracks = '/exports/humgen/idenhond/data/Enformer_test/Enformer_test_targets_perseq'
+    target_folder_newtracks = '/exports/humgen/idenhond/data/Enformer_test/Newtracks_2404_test_targets'
 
-target_folder_oldtracks = '/exports/humgen/idenhond/data/Enformer_train/Enformer_train_targets'
-target_folder_newtracks = '/exports/humgen/idenhond/data/Enformer_train/Enformer_train_targets_newtracks2703'
+    corr_matrix = np.zeros([5340, 5340])
+    np.set_printoptions(linewidth=400)   
+    for nr_x in range(1, 1937+1):      
+        print(nr_x)
+        target_old = torch.load(f'{target_folder_oldtracks}/targets_seq{nr_x}.pt', map_location=torch.device('cpu')).squeeze()
+        target_new = torch.load(f'{target_folder_newtracks}/targets_seq{nr_x}.pt', map_location=torch.device('cpu')).squeeze()
+        target = torch.cat((target_old, target_new), dim = 1)
+        x = np.corrcoef(target, rowvar=False)
+        corr_matrix = np.add(corr_matrix, x)
+        # if nr_x == 50: break
 
-corr_matrix = np.zeros([5332, 5332])
-np.set_printoptions(linewidth=400)   
+    final_matrix = corr_matrix/nr_x
 
-for nr_x in range(1, 1937+1):      
-    print(nr_x)
-    target_new = torch.load(f'{target_folder_newtracks}/targets_seq{nr_x}.pt', map_location=torch.device('cpu')).squeeze()
-    target_old = torch.load(f'{target_folder_oldtracks}/targets_seq{nr_x}.pt', map_location=torch.device('cpu')).squeeze()
-    target = torch.cat((target_old, target_new), dim = 1)
-    # print(f'shape of x sequence {nr_x}: {target.shape}')
-    x = np.corrcoef(target, rowvar=False)
-    # print(x.shape)
-    corr_matrix = np.add(corr_matrix, x)
-    # print(x)
-    # if nr_x == 1: break
+    plt.subplots(figsize=(50,50))
+    cmap = sns.color_palette("Blues", as_cmap=True)
+    plt.imshow(final_matrix, cmap=cmap)
+    plt.colorbar(shrink=0.5)
+    plt.savefig('heatmap_alltracks_testset_targets.png')
 
-final_matrix = corr_matrix/nr_x
-print(final_matrix)
+    ## all tracks test set outputs
+    output_folder_oldtracks = '/exports/humgen/idenhond/data/Enformer_test/Enformer_test_output_dnnhead_retrain2703'
+    output_folder_newtracks = '/exports/humgen/idenhond/data/Enformer_test/Enformer_test_output_newtracks_2404'
 
+    corr_matrix = np.zeros([5340, 5340])
+    np.set_printoptions(linewidth=400)   
+    for nr_x in range(1, 1937+1):      
+        print(nr_x)
+        output_old = torch.load(f'{output_folder_oldtracks}/output_seq{nr_x}.pt', map_location=torch.device('cpu')).squeeze()
+        output_new = torch.load(f'{output_folder_newtracks}/output_seq{nr_x}.pt', map_location=torch.device('cpu')).squeeze()
+        output = torch.cat((output_old, output_new), dim = 1)
+        x = np.corrcoef(output, rowvar=False)
+        corr_matrix = np.add(corr_matrix, x)
+        # if nr_x == 50: break
+    final_matrix = corr_matrix/nr_x
 
-plt.subplots(figsize=(50,50))
-plt.imshow(final_matrix, cmap='hot')
-plt.colorbar(shrink=0.5)
-plt.savefig('heatmap_alltracks_correct.png')
-exit()
-# pd.DataFrame(final_matrix).to_csv('heatmap_testset_newtracks.csv')
+    plt.subplots(figsize=(50,50))
+    cmap = sns.color_palette("Blues", as_cmap=True)
+    plt.imshow(final_matrix, cmap=cmap)
+    plt.colorbar(shrink=0.5)
+    plt.savefig('heatmap_alltracks_testset_output.png')
 
-f, ax = plt.subplots(figsize = (11,9))
-cmap = sns.diverging_palette(230, 20, as_cmap=True)
-sns.heatmap(final_matrix, vmin = 0.0, vmax = 1.0, cmap=cmap, square=True, linewidths=0.5, cbar_kws={"shrink": .5})
-plt.savefig('heatmap_testset_1trackalltracks.png', dpi = 600)
+if subset == 'train':
+    ## all tracks train set targets
+    target_folder_oldtracks = '/exports/humgen/idenhond/data/Enformer_train/Enformer_train_targets'
+    target_folder_newtracks = '/exports/humgen/idenhond/data/Enformer_train/Newtracks_2404_train_targets'
+
+    corr_matrix = np.zeros([5340, 5340])
+    np.set_printoptions(linewidth=400)   
+    for nr_x in range(1, 34021+1):      
+        print(nr_x)
+        target_old = torch.load(f'{target_folder_oldtracks}/targets_seq{nr_x}.pt', map_location=torch.device('cpu')).squeeze()
+        target_new = torch.load(f'{target_folder_newtracks}/targets_seq{nr_x}.pt', map_location=torch.device('cpu')).squeeze()
+        target = torch.cat((target_old, target_new), dim = 1)
+        x = np.corrcoef(target, rowvar=False)
+        corr_matrix = np.add(corr_matrix, x)
+        # if nr_x == 10: break
+
+    final_matrix = corr_matrix/nr_x
+
+    plt.subplots(figsize=(50,50))
+    cmap = sns.color_palette("Blues", as_cmap=True)
+    plt.imshow(final_matrix, cmap=cmap)
+    plt.colorbar(shrink=0.5)
+    plt.savefig('heatmap_alltracks_trainset_targets.png')
+
+    ## all tracks train set outputs
+    output_folder_oldtracks = '/exports/archive/hg-funcgenom-research/idenhond/Enformer_train/Enformer_train_output_dnnhead_retrain2703'
+    output_folder_newtracks = '/exports/humgen/idenhond/data/Enformer_train/Enformer_train_output_newtracks_2404'
+
+    corr_matrix = np.zeros([5340, 5340])
+    np.set_printoptions(linewidth=400)   
+    for nr_x in range(1, 34021+1):      
+        print(nr_x)
+        output_old = torch.load(f'{output_folder_oldtracks}/output_seq{nr_x}.pt', map_location=torch.device('cpu')).squeeze()
+        output_new = torch.load(f'{output_folder_newtracks}/output_seq{nr_x}.pt', map_location=torch.device('cpu')).squeeze()
+        output = torch.cat((output_old, output_new), dim = 1)
+        x = np.corrcoef(output, rowvar=False)
+        corr_matrix = np.add(corr_matrix, x)
+        # if nr_x == 10: break
+    final_matrix = corr_matrix/nr_x
+
+    plt.subplots(figsize=(50,50))
+    cmap = sns.color_palette("Blues", as_cmap=True)
+    plt.imshow(final_matrix, cmap=cmap)
+    plt.colorbar(shrink=0.5)
+    plt.savefig('heatmap_alltracks_trainset_output.png')
 
