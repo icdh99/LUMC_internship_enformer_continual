@@ -62,6 +62,7 @@ print(f'mean correlation score test dnn head: {df["test correlation dnn head"].m
 print(f'mean correlation score validation: {df["validation correlation"].mean(axis=0):.4f}')
 print(f'mean correlation score test enformer: {df["test correlation enformer"].mean(axis=0):.4f}')
 
+exit()
 # print(f'mean correlation score train dnn head: {df["train correlation"].mean(axis=0):.4f}')
 
 
