@@ -9,7 +9,7 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/exports/humgen/idenhond/miniconda3/envs
 
 script=/exports/humgen/idenhond/projects/enformer/distribution_tracks/heatmap_correlation/heatmap_correlation.py
 
-echo 'Date: ' $(date)
+echo 'Date: ' "$(date)"
 echo 'Script: ' $script
 echo 'Job name: ' $SLURM_JOB_NAME
 echo 'Job ID: ' $SLURM_JOBID
