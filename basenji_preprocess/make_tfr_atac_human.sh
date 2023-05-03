@@ -16,13 +16,15 @@ echo 'Job folder: ' $SLURM_SUBMIT_DIR; echo
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/exports/humgen/idenhond/miniconda3/envs/basenji/lib 
 
 bed_file=/exports/humgen/idenhond/data/basenji_preprocess/unmap_macro.bed   #HUMAN
-output_dir=/exports/humgen/idenhond/data/basenji_preprocess/output_tfr_human_atac # this folder should exist and contain the sequences.bed file
+output_dir=/exports/humgen/idenhond/data/basenji_preprocess/output_tfr_human_atac_normalized # this folder should exist and contain the sequences.bed file
 genome=/exports/humgen/idenhond/genomes/hg38.ml.fa
 blacklist=/exports/humgen/idenhond/data/Basenji/hg38.blacklist.rep.bed
 unmappable=/exports/humgen/idenhond/data/Basenji/umap_k24_t10_l32.bed #HUMAN
 txt_file=/exports/humgen/idenhond/data/basenji_preprocess/targets_human_atac.txt
 
-/exports/humgen/idenhond/basenji_dev/basenji/bin/basenji_data.py -g $bed_file -b $blacklist -u $unmappable -l 131072 --local --restart --crop 8192 -o $output_dir -p 8 -w 128 $genome $txt_file
+
+# ADJUST NORMALIZATION OPTION
+/exports/humgen/idenhond/basenji_dev/basenji/bin/basenji_data.py -g $bed_file -b $blacklist -u $unmappable -l 131072 --local --restart --crop 8192 -o $output_dir -p 8 -w 128 --normalize true $genome $txt_file
 
 # python inspect_tfr.py
 
