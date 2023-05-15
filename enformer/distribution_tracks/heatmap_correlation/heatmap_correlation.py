@@ -55,7 +55,26 @@ if subset == 'test':
     plt.colorbar(shrink=0.5)
     plt.savefig('heatmap_alltracks_testset_output.png')
 
-if subset == 'train':
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exit()
+if subset == 'train_targets':
+    ## te groot
     ## all tracks train set targets
     target_folder_oldtracks = '/exports/humgen/idenhond/data/Enformer_train/Enformer_train_targets'
     target_folder_newtracks = '/exports/humgen/idenhond/data/Enformer_train/Newtracks_2404_train_targets'
@@ -79,6 +98,8 @@ if subset == 'train':
     plt.colorbar(shrink=0.5)
     plt.savefig('heatmap_alltracks_trainset_targets.png')
 
+if subset == 'train_outputs':
+    ## te groot
     ## all tracks train set outputs
     output_folder_oldtracks = '/exports/archive/hg-funcgenom-research/idenhond/Enformer_train/Enformer_train_output_dnnhead_retrain2703'
     output_folder_newtracks = '/exports/humgen/idenhond/data/Enformer_train/Enformer_train_output_newtracks_2404'
