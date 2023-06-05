@@ -19,21 +19,29 @@ from enformer_pytorch.metrics import MeanPearsonCorrCoefPerChannel
 from tqdm import tqdm
 from torchmetrics.regression.pearson import PearsonCorrCoef
 
+subset = str(sys.argv[1])
+max_steps = int(sys.argv[2])
+
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print('Using device (set to GPU if available):', device)
 
-subset = str(sys.argv[1])
-max_steps = int(sys.argv[2])
-print(f'Subset: {subset}')
-print(f'Max steps: {max_steps}')
-
 # load stored outputs
-if subset == 'test':
-  tfr_file = f'/exports/archive/hg-funcgenom-research/idenhond/Enformer_test/Enformer_test_embeddings_newmodel/embeddings_test_pretrainedmodel.pt'
-  tensor_out = torch.load(tfr_file, map_location=torch.device('cpu')) 
-  print(f'shape of test output tensor: {tensor_out.shape}\n')
+# if subset == 'test':
+#   print('you have said test')
+#   # tfr_file = f'/exports/humgen/idenhond/data/Enformer_test/Enformer_test_output_newmodel/output_test.pt'
+#   tfr_file = f'/exports/archive/hg-funcgenom-research/idenhond/Enformer_test/Enformer_test_embeddings_newmodel/embeddings_test_pretrainedmodel.pt'
+    
+#   tensor_out = torch.load(tfr_file, map_location=torch.device(device)) 
+#   print(f'device of output tensor: {tensor_out.device}')
+#   print(f'shape of output tensor: {tensor_out.shape}\n')
+
+# if subset == 'valid':
+#   print('you have said valid')
+#   tfr_file = f'/exports/archive/hg-funcgenom-research/idenhond/Enformer_validation/Enformer_validation_embeddings_newmodel/embeddings_validation_pretrainedmodel.pt'
+#   # tfr_file = f'/exports/humgen/idenhond/data/Enformer_validation/output_validation.pt'
 
 print(f'Time after loading output tensor: {datetime.now() - start}') 
+
 
 SEQUENCE_LENGTH = 196_608
 BIN_SIZE = 128
@@ -53,12 +61,16 @@ class model(pl.LightningModule):
 	def __init__(self):
 		# define model
 		super(model, self).__init__()
-		self.linear = nn.Linear(in_features = 3072, out_features = 66, bias = True) #ADJUST NUMBER OF OUTPUT FEATURES
+		self.linear = nn.Linear(in_features = 3072, out_features = 5313, bias = True)
 		self.softplus = nn.Softplus(beta = 1, threshold = 20)	# default values for nn.Softplus()
 		self.lr = 1e-4
 		self.loss = nn.PoissonNLLLoss()
-		self.train_log = []
 		self.save_hyperparameters()
+
+		weights = torch.load('/exports/humgen/idenhond/projects/enformer/weigths/heads_human_0_weight.pt')
+		self.linear.weight.data = weights
+		bias = torch.load('/exports/humgen/idenhond/projects/enformer/weigths/heads_human_0_bias.pt')
+		self.linear.bias.data = bias
 
 	def forward(self, x):
 		# define forward pass
@@ -75,18 +87,15 @@ class model(pl.LightningModule):
 		x, y = train_batch 
 		logits = self.forward(x)
 		loss = self.loss(logits, y)
-		self.log("train_loss", loss, on_epoch=True, prog_bar=True)
-		self.train_log.append(loss.cpu().detach().numpy())
-		# tb_logger = self.logger.experiment
-		# tb_logger.add_scalars("losses", {"train_loss": loss})
-		self.logger.experiment.add_scalars('loss', {'train': loss},self.global_step) 
+		self.log("train_loss", loss, on_epoch=True, prog_bar=True, sync_dist=True)
+		self.logger.experiment.add_scalars('loss', {'train': loss},self.global_step)
 		return loss
 	
 	def test_step(self, batch, batch_idx):
 		x, y = batch
 		logits = self.forward(x)
 		test_loss = self.loss(logits, y)
-		self.log("test_loss", test_loss, on_epoch=True, prog_bar=True)
+		self.log("test_loss", test_loss, on_epoch=True, prog_bar=True, sync_dist=True)
 		return test_loss
 
 	def validation_step(self, valid_batch, batch_idx):
@@ -94,10 +103,8 @@ class model(pl.LightningModule):
 		x, y = valid_batch
 		logits = self.forward(x)
 		val_loss = self.loss(logits, y)
-		self.log("val_loss", val_loss, prog_bar=True)
+		self.log("val_loss", val_loss, prog_bar=True, sync_dist=True)
 		self.logger.experiment.add_scalars('loss', {'valid': val_loss},self.global_step)
-		# self.logger.experiment.add_scalars("losses", {"val_loss": val_loss})
-
 		return val_loss
 
 	def predict_step(self, batch, batch_idx):
@@ -132,6 +139,7 @@ class FastaStringExtractor:
 class BasenjiDataSet(torch.utils.data.IterableDataset):
   @staticmethod
   def get_organism_path(organism):
+    # return os.path.join('gs://basenji_barnyard/data', organism) # change to human
     return '/exports/humgen/idenhond/data/Basenji'
   @classmethod
   def get_metadata(cls, organism):
@@ -152,12 +160,10 @@ class BasenjiDataSet(torch.utils.data.IterableDataset):
     path_to_tfr_records = os.path.join(
         cls.get_organism_path(organism), 'tfrecords', f'{subset}-*.tfr'
       )
-    path_to_tfr_records = f'/exports/humgen/idenhond/data/basenji_preprocess/output_tfr_human_atac/tfrecords/{subset}-*.tfr'
-    # if subset == 'train':
-    #     path_to_tfr_records = f'/exports/archive/hg-funcgenom-research/idenhond/Basenji/tfrecords/{subset}-*.tfr'
-    
-    # else:
-    #     path_to_tfr_records = f'/exports/humgen/idenhond/data/Basenji/tfrecords/{subset}-*.tfr'
+    if subset == 'train':
+        path_to_tfr_records = f'/exports/archive/hg-funcgenom-research/idenhond/Basenji/tfrecords/{subset}-*.tfr'
+    else:
+        path_to_tfr_records = f'/exports/humgen/idenhond/data/Basenji/tfrecords/{subset}-*.tfr'
     print(f"output of get_tfrecord_files function: \n{sorted(tf.io.gfile.glob(path_to_tfr_records), key=lambda x: int(x.split('-')[-1].split('.')[0]))}")
     return sorted(tf.io.gfile.glob(path_to_tfr_records), key=lambda x: int(x.split('-')[-1].split('.')[0]))
   
@@ -181,10 +187,8 @@ class BasenjiDataSet(torch.utils.data.IterableDataset):
     sequence = tf.cast(sequence, tf.float32)
 
     target = tf.io.decode_raw(example['target'], tf.float16)
-    # target = tf.reshape(target,
-    #                     (metadata['target_length'], metadata['num_targets']))
     target = tf.reshape(target,
-                        (metadata['target_length'], 66))
+                        (metadata['target_length'], metadata['num_targets']))
     target = tf.cast(target, tf.float32)
 
     return {'sequence_old': sequence,
@@ -241,8 +245,13 @@ class BasenjiDataSet(torch.utils.data.IterableDataset):
           "target": records["target"],
       }
 
-# load model trained on human atac seq tracks
-path = '/exports/humgen/idenhond/projects/enformer/dnn_head/train_human_atac/model_2023-04-24 17:53:40.485828/epoch=18-step=5054-val_loss=0.4.ckpt'
+# model = Enformer.from_pretrained("EleutherAI/enformer-official-rough")
+# model = model.eval().cuda()
+
+# load model
+# path = '/exports/humgen/idenhond/projects/enformer/dnn_head/dnn_head_train/model_2023-03-10 17:52:03.039827_v3/epoch=19-step=5320-val_loss=0.8.ckpt'
+# path = '/exports/humgen/idenhond/projects/enformer/dnn_head/dnn_head_train/model_2023-03-23 09:36:14.367136/epoch=18-step=5054-val_loss=0.8.ckpt'  # retrain dnn head, finished on 27/3
+path = '/exports/humgen/idenhond/projects/enformer/dnn_head/train_dnn_head_init_weights/model_2023-05-20 07:29:47.870364/epoch=0-step=266-val_loss=inf.ckpt' # dnn head with Enformer weights
 print(path)
 model = model.load_from_checkpoint(path)
 model.eval().cuda()
@@ -258,46 +267,52 @@ def compute_correlation(model, organism:str="human", subset:str=subset, max_step
   total = len(ds.region_df) # number of records
   print(f'number of records: {total}')
   dl = torch.utils.data.DataLoader(ds, num_workers=0, batch_size=1)
-  corr_coef = MeanPearsonCorrCoefPerChannel(n_channels=66) # ADJUST NUMBER OF CHANNELS TO NR OF TRACKS
+  corr_coef = MeanPearsonCorrCoefPerChannel(n_channels=ds.num_channels) # 5313 channels
   n_steps = total if max_steps <= 0 else max_steps
   print(f'number of steps to calculate correlation coefficient: {n_steps}')
   for i,batch in enumerate(tqdm(dl, total=n_steps)):
     if max_steps > 0 and i >= max_steps:
       break
-    # batch_gpu = {k:v.to(model.device) for k,v in batch.items()}; # sequence = batch_gpu['sequence']; # target = batch_gpu['target']
+    
+    batch_gpu = {k:v.to(model.device) for k,v in batch.items()}
+    sequence = batch_gpu['sequence']
+    target = batch_gpu['target']
     with torch.no_grad():
-      if subset == 'train': 
-          emb = torch.load(f'/exports/humgen/idenhond/data/Enformer_train/Enformer_train_embeddings_pretrainedmodel/embeddings_seq{i+1}.pt', map_location=torch.device(device))
-          target = torch.load(f'/exports/humgen/idenhond/data/Enformer_train/Human_ATAC_train_targets/targets_seq{i+1}.pt', map_location=torch.device(device))
-      elif subset == 'test': 
-          emb = tensor_out[i].cuda()
-          target = torch.load(f'/exports/humgen/idenhond/data/Enformer_test/Human_ATAC_test_targets/targets_seq{i+1}.pt', map_location=torch.device(device))
-      elif subset == 'valid': 
+      if subset == 'train': emb = torch.load(f'/exports/humgen/idenhond/data/Enformer_train/Enformer_train_embeddings_pretrainedmodel/embeddings_seq{i+1}.pt', map_location=torch.device(device))
+      # if subset == 'test': emb = tensor_out[i] 
+      if subset == 'test': 
+          emb = np.loadtxt(f'/exports/humgen/idenhond/data/Enformer_test/Enformer_test_embeddings/embeddings_seq{i+1}.txt', delimiter=',')
+          emb = torch.from_numpy(emb).to(device)
+      if subset == 'valid': 
           emb = torch.load(f'/exports/humgen/idenhond/data/Enformer_validation/Enformer_validation_embeddings_pretrainedmodel_perseq/embeddings_seq{i+1}.pt', map_location=torch.device(device))
-          target = torch.load(f'/exports/humgen/idenhond/data/Enformer_validation/Human_ATAC_validation_targets/targets_seq{i+1}.pt', map_location=torch.device(device))
-    #   print(f'emb shape: {emb.shape}')
-    #   print(f'target shape: {target.shape}')
+      # print(type(emb))
+      # print(emb.dtype)
+      # print(emb.shape)
+      emb = emb.to(torch.float32)
       pred1 = model(emb)
+      # print(type(emb))
+      # print(type(pred1))
       pred = torch.unsqueeze(pred1, 0)
-    #   print(f'pred shape: {pred.shape}')
-      # if subset == 'train': torch.save(pred, f'/exports/humgen/idenhond/data/Enformer_train/Enformer_train_output_humanatac/output_seq{i+1}.pt')
-      if subset == 'test': torch.save(pred, f'/exports/humgen/idenhond/data/Enformer_test/Enformer_test_output_humanatac/output_seq{i+1}.pt')
-      # if subset == 'valid': torch.save(pred, f'/exports/humgen/idenhond/data/Enformer_validation/Enformer_validation_output_humanatac/output_seq{i+1}.pt')
+      # if subset == 'train': torch.save(pred, f'/exports/humgen/idenhond/data/Enformer_train/Enformer_train_output_dnnhead_retrain2703/output_seq{i+1}.pt')
+      # if subset == 'test': torch.save(pred, f'/exports/humgen/idenhond/data/Enformer_test/Enformer_test_output_dnnhead_retrain2703/output_seq{i+1}.pt')
+      # if subset == 'valid': torch.save(pred, f'/exports/humgen/idenhond/data/Enformer_validation/Enformer_validation_output_dnnhead_retrain2703/output_seq{i+1}.pt')
 
       corr_coef(preds=pred.cpu(), target=target.cpu())
-    #   print(i)
+      print(i)
 
   compu = corr_coef.compute()
   print(f'final corr coef compute: {compu}')
-  print(f'\nfinal shape corr coef compute: {compu.shape} ')
+  print(f'final shape corr coef compute: {compu.shape} ')
+#   print(f'shape mean correlation coefficient: {corr_coef.compute().mean().shape}')
 
-# BESTANDSNAAM AANPASSEN
+#   # BESTANDSNAAM AANPASSEN
   t_np = compu.numpy()
+  print(t_np.shape)
   df = pd.DataFrame(t_np)
-  df.to_csv(f"/exports/humgen/idenhond/data/evaluate_correlation/correlation_per_track_{subset}_humanatac.csv",index=True)
+  # df.to_csv(f"/exports/humgen/idenhond/data/evaluate_correlation/correlation_per_track_{subset}_dnn_head_initweights.csv",index=True)
   return corr_coef.compute().mean()
 
 a = compute_correlation(model, organism="human", subset=subset, max_steps=max_steps)
-print(f'\nmean correlation for {subset}: {a}')
+print(f'mean correlation for {subset}: {a}')
 
 print(f'Time: {datetime.now() - start}') 

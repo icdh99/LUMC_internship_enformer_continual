@@ -1,15 +1,15 @@
 #!/bin/bash
 #SBATCH --mail-type=END,FAIL
 #SBATCH --mail-user=icdenhond@gmail.com
-#SBATCH --time=2:00:00
+#SBATCH --time=12:00:00
 #SBATCH --partition=gpu
 #SBATCH --gres=gpu:1
-#SBATCH --mem=30G
+#SBATCH --mem=100G
 #SBATCH --output=Reports/%j.%x.out
 
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/exports/humgen/idenhond/miniconda3/envs/enformer_dev/lib 
 
-script=/exports/humgen/idenhond/projects/enformer/correlation/evaluate_correlation_humanatac.py
+script=/exports/humgen/idenhond/projects/enformer/correlation/evaluate_correlation_dnn_head_initweights.py
 
 echo 'Date: ' $(date)
 echo 'Script: ' $script
