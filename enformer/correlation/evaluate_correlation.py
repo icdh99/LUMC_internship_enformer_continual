@@ -193,6 +193,7 @@ def compute_correlation(model, organism:str="human", subset:str=subset, max_step
     target = batch_gpu['target']
     with torch.no_grad():
       pred = model(sequence)[organism]
+      if subset == 'test': torch.save(pred, f'/exports/humgen/idenhond/data/Enformer_test/Enformer_test_output/output_seq{i+1}.pt')
       # print(type(pred))
       # print(f'pred shape: {pred.shape}')
       corr_coef(preds=pred.cpu(), target=target.cpu())
@@ -209,7 +210,7 @@ def compute_correlation(model, organism:str="human", subset:str=subset, max_step
   t_np = compu.numpy()
   print(t_np.shape)
   df = pd.DataFrame(t_np)
-  df.to_csv(f"/exports/humgen/idenhond/data/evaluate_correlation/correlation_per_track_{subset}.csv",index=True)
+  df.to_csv(f"/exports/humgen/idenhond/data/evaluate_correlation/correlation_per_track_{subset}_1905.csv",index=True)
   return corr_coef.compute().mean()
 
 a = compute_correlation(model, organism="human", subset=subset, max_steps=max_steps)
