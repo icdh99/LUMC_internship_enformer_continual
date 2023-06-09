@@ -74,17 +74,19 @@ values_outputs_aclevel = outputs_aclevel[np.tril_indices(43, k=-1)].tolist()
 
 data = {"List": ['All'] * len(values_outputs) * 2 + ['Class'] * len(values_targets_class) * 2 + ['Subclass'] * len(values_targets_subclass) * 2 + ['AC level'] * len(values_targets_aclevel) * 2 ,
         "Value": values_targets + values_outputs + values_targets_class + values_outputs_class + values_targets_subclass + values_outputs_subclass + values_targets_aclevel + values_outputs_aclevel,
-        "Type": ['TARGET'] * len(values_outputs) + ['OUTPUT'] * len(values_outputs) + ['TARGET'] * len(values_outputs_class) + ['OUTPUT'] * len(values_outputs_class) + ['TARGET'] * len(values_outputs_subclass) + ['OUTPUT'] * len(values_outputs_subclass) + ['TARGET'] * len(values_outputs_aclevel) + ['OUTPUT'] * len(values_outputs_aclevel) }
+        "Type": ['Target'] * len(values_outputs) + ['Predicted'] * len(values_outputs) + ['Target'] * len(values_outputs_class) + ['Predicted'] * len(values_outputs_class) + ['Target'] * len(values_outputs_subclass) + ['Predicted'] * len(values_outputs_subclass) + ['Target'] * len(values_outputs_aclevel) + ['Predicted'] * len(values_outputs_aclevel) }
 
 df = pd.DataFrame(data)
-plt.figure()
+fig = plt.figure(figsize = (10.0, 5.8))
+plt.tight_layout()
 flierprops = dict(marker='o', markerfacecolor='None', markersize=0.5,  markeredgecolor='black')
 ax = sns.boxplot(data = df, x = 'List', y = 'Value', hue = 'Type', palette = sns.color_palette("Paired"), flierprops=flierprops)
 # plt.xticks(rotation = 45)
-plt.title('Correlation between true and predicted genomic tracks per assay type')
-# plt.xlabel(None)
+plt.xlabel(None)
 handles, labels = ax.get_legend_handles_labels()
 ax.legend(handles=handles[0:], labels=labels[0:])
+plt.legend(loc = 'lower left', bbox_to_anchor=(0, 1, 0.5, 0.5))
 plt.ylabel('Correlation')
-plt.savefig('boxplot_atac_ordered.png', bbox_inches = 'tight')
+plt.savefig('boxplot_atac_ordered.png', bbox_inches = 'tight', dpi = 300)
+plt.savefig('/exports/humgen/idenhond/projects/enformer/correlation/plots_paper/Plots_paper/Fig3_ATAC/boxplot_atac_ordered.png', bbox_inches = 'tight', dpi = 300)
 plt.close()

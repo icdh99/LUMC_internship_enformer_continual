@@ -2,6 +2,40 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
+from matplotlib.patches import PathPatch
+
+def adjust_box_widths(g, fac):
+    """
+    Adjust the widths of a seaborn-generated boxplot.
+    """
+
+    # iterating through Axes instances
+    for ax in g.axes:
+
+        # iterating through axes artists:
+        for c in ax.get_children():
+
+            # searching for PathPatches
+            if isinstance(c, PathPatch):
+                # getting current width of box:
+                p = c.get_path()
+                verts = p.vertices
+                verts_sub = verts[:-1]
+                xmin = np.min(verts_sub[:, 0])
+                xmax = np.max(verts_sub[:, 0])
+                xmid = 0.5*(xmin+xmax)
+                xhalf = 0.5*(xmax - xmin)
+
+                # setting new width of box
+                xmin_new = xmid-fac*xhalf
+                xmax_new = xmid+fac*xhalf
+                verts_sub[verts_sub[:, 0] == xmin, 0] = xmin_new
+                verts_sub[verts_sub[:, 0] == xmax, 0] = xmax_new
+
+                # setting new width of median line
+                for l in ax.lines:
+                    if np.all(l.get_xdata() == [xmin, xmax]):
+                        l.set_xdata([xmin_new, xmax_new])
 
 np.set_printoptions(linewidth=400) 
 
@@ -102,9 +136,9 @@ values_outputs_enformer_dnase_vs_chip = [item for sublist in outputs_enformer_dn
 values_outputs_enformer_dnase_vs_cage = [item for sublist in outputs_enformer_dnase_vs_cage.tolist() for item in sublist]
 values_outputs_enformer_cage_vs_chip = [item for sublist in outputs_enformer_cage_vs_chip.tolist() for item in sublist]
 
-# data = {"List": ["DNASE"] * len(values_targets_dnase) * 3 + ["ChIP"] * len(values_targets_chip) *3 + ["CAGE"] * len(values_targets_cage) *3  + ["DNASE vs ChIP"] * len(values_targets_dnase_vs_chip) *3 + ["DNASE vs CAGE"] * len(values_targets_dnase_vs_cage) *3 + ["CAGE vs ChIP"] * len(values_targets_cage_vs_chip) *3,
+# data = {"List": ["DNase, ATAC"] * len(values_targets_dnase) * 3 + ["ChIP"] * len(values_targets_chip) *3 + ["CAGE"] * len(values_targets_cage) *3  + ["DNase, ATAC vs ChIP"] * len(values_targets_dnase_vs_chip) *3 + ["DNase, ATAC vs CAGE"] * len(values_targets_dnase_vs_cage) *3 + ["CAGE vs ChIP"] * len(values_targets_cage_vs_chip) *3,
 #         "Value": values_targets_dnase + values_outputs_dnase + values_outputs_enformer_dnase + values_targets_chip + values_outputs_chip + values_outputs_enformer_chip + values_targets_cage + values_outputs_cage + values_outputs_enformer_cage + values_targets_dnase_vs_chip + values_outputs_dnase_vs_chip + values_outputs_enformer_dnase_vs_chip + values_targets_dnase_vs_cage + values_outputs_dnase_vs_cage + values_outputs_enformer_dnase_vs_cage + values_targets_cage_vs_chip + values_outputs_cage_vs_chip + values_outputs_enformer_cage_vs_chip,
-#         "Type": ["TARGET"] * len(values_targets_dnase) + ["OUTPUT HUMAN HEAD"] * len(values_outputs_dnase) + ["OUTPUT ENFORMER"] * len(values_outputs_dnase) + ["TARGET"] * len(values_targets_chip)+ ["OUTPUT HUMAN HEAD"] * len(values_targets_chip) + ["OUTPUT ENFORMER"] * len(values_targets_chip) + ["TARGET"] * len(values_targets_cage)+ ["OUTPUT HUMAN HEAD"] * len(values_targets_cage) + ["OUTPUT ENFORMER"] * len(values_targets_cage)  + ["TARGET"] * len(values_targets_dnase_vs_chip)+ ["OUTPUT HUMAN HEAD"] * len(values_targets_dnase_vs_chip) + ["OUTPUT ENFORMER"] * len(values_targets_dnase_vs_chip) + ["TARGET"] * len(values_targets_dnase_vs_cage)+ ["OUTPUT HUMAN HEAD"] * len(values_targets_dnase_vs_cage) + ["OUTPUT ENFORMER"] * len(values_targets_dnase_vs_cage) + ["TARGET"] * len(values_targets_cage_vs_chip)+ ["OUTPUT HUMAN HEAD"] * len(values_targets_cage_vs_chip) + ["OUTPUT ENFORMER"] * len(values_targets_cage_vs_chip) }
+#         "Type": ["Target"] * len(values_targets_dnase) + ["Output Human Head"] * len(values_outputs_dnase) + ["Output Enformer-pytorch"] * len(values_outputs_dnase) + ["Target"] * len(values_targets_chip)+ ["Output Human Head"] * len(values_targets_chip) + ["Output Enformer-pytorch"] * len(values_targets_chip) + ["Target"] * len(values_targets_cage)+ ["Output Human Head"] * len(values_targets_cage) + ["Output Enformer-pytorch"] * len(values_targets_cage)  + ["Target"] * len(values_targets_dnase_vs_chip)+ ["Output Human Head"] * len(values_targets_dnase_vs_chip) + ["Output Enformer-pytorch"] * len(values_targets_dnase_vs_chip) + ["Target"] * len(values_targets_dnase_vs_cage)+ ["Output Human Head"] * len(values_targets_dnase_vs_cage) + ["Output Enformer-pytorch"] * len(values_targets_dnase_vs_cage) + ["Target"] * len(values_targets_cage_vs_chip)+ ["Output Human Head"] * len(values_targets_cage_vs_chip) + ["Output Enformer-pytorch"] * len(values_targets_cage_vs_chip) }
 # df = pd.DataFrame(data)
 
 # print(len(df['List']))
@@ -112,23 +146,51 @@ values_outputs_enformer_cage_vs_chip = [item for sublist in outputs_enformer_cag
 # print(len(df['Type']))
 # print(df.tail)
 
-# # PROPS = {
-# #     'boxprops':{'facecolor':'none', 'edgecolor':'black'},
-# #     'medianprops':{'color':'black'},
-# #     'whiskerprops':{'color':'black'},
-# #     'capprops':{'color':'black'}
-# # }
+# PROPS = {
+#     'boxprops':{'facecolor':'none', 'edgecolor':'black'},
+#     'medianprops':{'color':'black'},
+#     'whiskerprops':{'color':'black'},
+#     'capprops':{'color':'black'}
+# }
 
-# plt.figure()
-# flierprops = dict(marker='o', markerfacecolor='None', markersize=0.5,  markeredgecolor='black')
-# sns.boxplot(data = df, x = 'List', y = 'Value', hue = 'Type', palette = sns.color_palette("Paired"), flierprops=flierprops)
-# plt.xticks(rotation = 45)
-# plt.title('Correlation between true and predicted genomic tracks per assay type')
-# plt.xlabel('Assay type comparison')
-# plt.ylabel('Correlation')
-# plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
-# plt.savefig('boxplot_enformer_tracks.png', bbox_inches = 'tight')
+# plt.figure(figsize = (5.0, 5.8)) #width, height (6.4 4.8 default)
+# flierprops = dict(marker='o', markerfacecolor='None', markersize=0.3,  markeredgecolor='black')
+# ax = sns.boxplot(data = df, x = 'Value', y = 'List', hue = 'Type', linewidth = 0.8, palette = sns.color_palette("Paired"), flierprops=flierprops)
+# sns.despine(top=True, right=True, left=False, bottom=False)
+# ax.tick_params(axis='both', which='major', labelsize=7)
+# # plt.title('Correlation between true and predicted genomic tracks per assay type')
+# plt.xlabel('Pearson Correlation Coefficient', fontsize = 7)
+# plt.ylabel(None)
+# plt.xticks([-0.50, 0, 0.50, 1], [-0.50, 0, 0.50, 1])
+# plt.legend(bbox_to_anchor=(0.01, 1), loc='upper left', prop={'size': 6})
+# plt.savefig('boxplot_enformer_tracks.png', bbox_inches = 'tight', dpi = 300)
+# plt.savefig('/exports/humgen/idenhond/projects/enformer/correlation/plots_paper/Plots_paper/Fig1_correlation_dnnhead/Boxplot_enformer_tracks.png', bbox_inches = 'tight', dpi = 300)
 # plt.close()
+# fig_width, fig_height = plt.gcf().get_size_inches()
+# print(fig_width, fig_height)
+
+data = {"List": ['Histone ChIP'] * len(values_outputs_newtracks_histone) * 2 + ['TF ChIP'] * len(values_outputs_newtracks_tf) * 2  + ['DNase'] * len(values_outputs_newtracks_dnase) * 2  ,
+        "Value": values_targets_newtracks_histone + values_outputs_newtracks_histone + values_targets_newtracks_tf + values_outputs_newtracks_tf + values_targets_newtracks_dnase + values_outputs_newtracks_dnase,
+        "Type": ['Target'] * len(values_outputs_newtracks_histone) + ['Output'] * len(values_outputs_newtracks_histone) +  ['Target'] * len(values_outputs_newtracks_tf) + ['Output'] * len(values_outputs_newtracks_tf) + ['Target'] * len(values_outputs_newtracks_dnase) + ['Output'] * len(values_outputs_newtracks_dnase)
+}
+
+df = pd.DataFrame(data)
+
+palette_paired= sns.color_palette("Paired")
+palette = sns.color_palette([palette_paired[4], palette_paired[5]])
+fig = plt.figure(figsize = (5.0, 5.8))
+plt.tight_layout()
+flierprops = dict(marker='o', markerfacecolor='None', markersize=1,  markeredgecolor='black')
+sns.boxplot(data = df, x = 'List', y = 'Value', hue = 'Type', palette = palette, flierprops=flierprops)
+sns.despine(top=True, right=True, left=False, bottom=False)
+plt.ylabel('Pearson Correlation Coefficient', fontsize = 10)
+plt.legend(title = None)
+plt.xlabel(None)
+adjust_box_widths(fig, 0.9)
+plt.savefig('/exports/humgen/idenhond/projects/enformer/correlation/plots_paper/Plots_paper/Fig2_newtracks/Boxplot_newtracks.png', bbox_inches = 'tight', dpi = 300)
+plt.savefig('boxplot_newtracks_perassaytype.png', bbox_inches = 'tight')
+plt.close()
+
 
 # # new tracks outputs & targets
 # data = {"List": ["NEW"] * len(values_targets_newtracks) *2 + ["NEW vs DNASE"] * len(values_targets_new_vs_dnase)*2  + ["NEW vs ChIP"] * len(values_targets_new_vs_chip)*2  + ["NEW vs CAGE"] * len(values_targets_new_vs_cage)*2 , 
@@ -145,30 +207,4 @@ values_outputs_enformer_cage_vs_chip = [item for sublist in outputs_enformer_cag
 # plt.ylabel('Correlation')
 # plt.savefig('boxplot_newtracks.png', bbox_inches = 'tight')
 # plt.close()
-
-data = {"List": ['HISTONE CHIP (NEW)'] * len(values_outputs_newtracks_histone) * 2 + ['TF CHIP (NEW)'] * len(values_outputs_newtracks_tf) * 2  + ['DNASE (NEW)'] * len(values_outputs_newtracks_dnase) * 2  ,
-        "Value": values_targets_newtracks_histone + values_outputs_newtracks_histone + values_targets_newtracks_tf + values_outputs_newtracks_tf + values_targets_newtracks_dnase + values_outputs_newtracks_dnase,
-        "Type": ['TARGET'] * len(values_outputs_newtracks_histone) + ['OUTPUT'] * len(values_outputs_newtracks_histone) +  ['TARGET'] * len(values_outputs_newtracks_tf) + ['OUTPUT'] * len(values_outputs_newtracks_tf) + ['TARGET'] * len(values_outputs_newtracks_dnase) + ['OUTPUT'] * len(values_outputs_newtracks_dnase)
-}
-
-print(len(values_outputs_newtracks_histone))
-print(len(data['List']))
-print(len(data['Value']))
-print(len(data['Type']))
-
-df = pd.DataFrame(data)
-print(len(df['List']))
-print(len(df['Value']))
-print(len(df['Type']))
-print(df.tail)
-
-plt.figure()
-flierprops = dict(marker='o', markerfacecolor='None', markersize=0.5,  markeredgecolor='black')
-sns.boxplot(data = df, x = 'List', y = 'Value', hue = 'Type', palette = sns.color_palette("Paired"), flierprops=flierprops)
-plt.xticks(rotation = 45)
-plt.title('Correlation between true and predicted genomic tracks per assay type')
-plt.xlabel('Assay type comparison')
-plt.ylabel('Correlation')
-plt.savefig('boxplot_newtracks_perassaytype.png', bbox_inches = 'tight')
-plt.close()
 
