@@ -88,5 +88,5 @@ print(len(full_name_list))
 df = pd.DataFrame({'Original Seq nr': original_seq_nr_list, 'Correlation': corr_list, 'Full name': full_name_list})
 print(df)
 
-df.to_csv('/exports/humgen/idenhond/projects/dar/correlation_per_DAR/Subclass/Correlation_DAR_subclass.csv')
+df.to_csv('/exports/humgen/idenhond/projects/dar/correlation_per_DAR/Subclass/Correlation_test_DAR_subclass.csv')
 
