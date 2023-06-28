@@ -3,11 +3,11 @@ A transfer-learning approach to fine-tune existing sequence-based deep learning 
 Here, we present a transfer-learning approach to predict new genomic profiles like chromatin accessibility and transcription factor binding directly from DNA sequence. We treat Enformer, the state-of-the-art deep learning model for predicting gene expression from DNA sequence, as a pretrained model by finetuning the human head model with the Enformer embeddings. We define the downstream fine-tuning tasks as learning new genomic profiles on different resolutions, ranging from tissue to cell-type specific. This repository contains the code to finetune the human head model on the snATAC-seq tracks, from the raw genomic coverage data to evalauting the predictions.
 
 
-1. Genomic coverage files
-2. Make tensor flow records from genomic coverage files
-3. Generate embeddings from Enformer 
-4. Train human head model
-5. Evaluate human head model
+1) Genomic coverage files
+2) Make tensor flow records from genomic coverage files
+3) Generate embeddings from Enformer 
+4) Train human head model
+5) Evaluate human head model
 
 1. Genomic coverage files
 The snATAC genomic coverage (BigWig) files are downloaded from https://genome.ucsc.edu/cgi-bin/hgTrackUi?hgsid=1609681239_fUFy3yi8hM5baXlnKyZFAvUuEyR5&c=chr15&g=hub_2136863_humanMopATAC%2DseqMultiwigs and stored at /exports/humgen/idenhond/data/human_Mop_ATAC/bw_files. 
