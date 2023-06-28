@@ -64,74 +64,99 @@ print(f'Mean correlation Train at AC-cluster level: {df_aclevel["Train correlati
 print(df_all)
 value_mapping = {'Class': 1, 'Subclass': 2, 'Ac-level cluster': 3}
 df_all['Sort'] = df_all['level'].map(value_mapping)
-df_all = df_all.sort_values(by = 'Sort', axis = 'index')
+df_all = df_all.sort_values(by = ['Sort'], axis = 'index')
 print(df_all)
 
-# groups = df_all.groupby('Sort')
-# fig, axs = plt.subplots(nrows=1, ncols=len(groups), sharex=False, sharey=True, width_ratios=[1, 6, 12], constrained_layout = True, figsize = (6.4*2, 4.8*2)) #
-# for (name, group), ax1 in zip(groups, axs):
-#     print(name) # 1, 2, 3
-#     # ax1.grid()
-#     ax1.set_axisbelow(True)
-#     # ax1.grid(axis='both', which='both')
-#     ax1.yaxis.grid(color='gray')
-#     # ax1.xaxis.grid(True, color='gray', linestyle='dashed')
+groups = df_all.groupby('Sort')
+fig, axs = plt.subplots(nrows=1, ncols=len(groups), sharex=False, sharey=True, width_ratios=[1, 6, 12], constrained_layout = True, figsize = (6.4*2, 4.8*1.5)) #
+for (name, group), ax1 in zip(groups, axs):
+    print(name) # 1, 2, 3
+    ax1.set_axisbelow(True)
+    ax1.yaxis.grid(color='gray')
 
-#     group = group.sort_values(by = 'Class', axis = 'index')
-#     print(group.shape)
-#     ax1.tick_params(axis='x', labelrotation = 90)
-#     ax2 = ax1.twinx()
-#     ax2.set_ylim([0, 1])
-#     ax1.set_xlabel(None)
-#     ax2.set_xlabel(None)
+    if name == 1: group['names'] = group['names'].str.split(' ').str[0]
+    if name == 2: group['names'] = group['names'].str.split(' ').str[1:-1].apply(' '.join)
+    if name == 3: group['names'] = group['names'].str.split(' ').str[1:].apply(' '.join)
 
-#     print(group)
-#     sns.barplot(data = group, x = 'names', y = 'Nuclei', ax = ax1, hue = 'Class', dodge=False)
-#     sns.lineplot(data = group, x = 'names', y = 'Test correlation', ax=ax2, marker = 'o', color = 'k', linestyle='')
-#     if name == 1 or name == 2:
-#         ax2.set_yticklabels([]) 
-#         ax2.set_ylabel(None)
-#     if name == 2 or name == 3: 
-#         ax1.set_ylabel(None)
+    group = group.sort_values(by = ['Class', 'names'], axis = 'index')
+    print(group.shape)
+    print(group['names'])
+    ax1.tick_params(axis='x', labelrotation = 90)
+    ax2 = ax1.twinx()
+    ax2.set_ylim([0, 1])
+    sns.barplot(data = group, x = 'names', y = 'Nuclei', ax = ax1, hue = 'Class', dodge=False)
+    sns.lineplot(data = group, x = 'names', y = 'Test correlation', ax=ax2, marker = 'o', color = 'k', linestyle='')
+    ax1.set_xlabel(None)
+    ax2.set_xlabel(None)
+    if name == 1 or name == 2:
+        ax2.set_yticklabels([]) 
+        ax2.set_ylabel(None)
+        ax1.get_legend().remove()
+    if name == 2 or name == 3: 
+        ax1.set_ylabel(None)
+    if name == 3:
+        ax1.tick_params(axis='x', which='major', labelsize=8)
     
-# plt.savefig('/exports/humgen/idenhond/projects/human_atac_classes/Plots/barplot_test.png', bbox_inches='tight', dpi = 300)
-# plt.savefig('/exports/humgen/idenhond/projects/enformer/correlation/plots_paper/Plots_paper/Fig3_ATAC/barplot_test.png', bbox_inches='tight', dpi = 300)
+plt.savefig('/exports/humgen/idenhond/projects/human_atac_classes/Plots/barplot_test.png', bbox_inches='tight', dpi = 300)
+plt.savefig('/exports/humgen/idenhond/projects/enformer/correlation/plots_paper/Plots_paper/Fig3_ATAC/barplot_test.png', bbox_inches='tight', dpi = 300)
 
-# fig, axs = plt.subplots(nrows=1, ncols=len(groups), sharex=False, sharey=True, width_ratios=[1, 6, 12], constrained_layout = True, figsize = (6.4*2, 4.8*2)) #
-# for (name, group), ax1 in zip(groups, axs):
-#     group = group.sort_values(by = 'Class', axis = 'index')
-#     ax1.tick_params(axis='x', labelrotation = 90)
-#     ax2 = ax1.twinx()
-#     ax2.set_ylim([0, 1])
-#     ax1.set_xlabel(None)
-#     ax2.set_xlabel(None)
-#     sns.barplot(data = group, x = 'names', y = 'Nuclei', ax = ax1, hue = 'Class', dodge=False)
-#     sns.lineplot(data = group, x = 'names', y = 'Train correlation', ax=ax2, marker = 'o', color = 'k', linestyle='')
-#     if name == 1 or name == 2:
-#         ax2.set_yticklabels([]) 
-#         ax2.set_ylabel(None)
-#     if name == 2 or name == 3: 
-#         ax1.set_ylabel(None)
-# plt.savefig('/exports/humgen/idenhond/projects/human_atac_classes/Plots/barplot_train.png', bbox_inches='tight', dpi = 300)
-# plt.savefig('/exports/humgen/idenhond/projects/enformer/correlation/plots_paper/Plots_paper/Fig3_ATAC/barplot_train.png', bbox_inches='tight', dpi = 300)
+fig, axs = plt.subplots(nrows=1, ncols=len(groups), sharex=False, sharey=True, width_ratios=[1, 6, 12], constrained_layout = True, figsize = (6.4*2, 4.8*1.5)) #
+for (name, group), ax1 in zip(groups, axs):
+    ax1.set_axisbelow(True)
+    ax1.yaxis.grid(color='gray')
+    if name == 1: group['names'] = group['names'].str.split(' ').str[0]
+    if name == 2: group['names'] = group['names'].str.split(' ').str[1:-1].apply(' '.join)
+    if name == 3: group['names'] = group['names'].str.split(' ').str[1:].apply(' '.join)
 
-# fig, axs = plt.subplots(nrows=1, ncols=len(groups), sharex=False, sharey=True, width_ratios=[1, 6, 12], constrained_layout = True, figsize = (6.4*2, 4.8*2)) #
-# for (name, group), ax1 in zip(groups, axs):
-#     group = group.sort_values(by = 'Class', axis = 'index')
-#     ax1.tick_params(axis='x', labelrotation = 90)
-#     ax2 = ax1.twinx()
-#     ax2.set_ylim([0, 1])
-#     ax1.set_xlabel(None)
-#     ax2.set_xlabel(None)
-#     sns.barplot(data = group, x = 'names', y = 'Nuclei', ax = ax1, hue = 'Class', dodge=False)
-#     sns.lineplot(data = group, x = 'names', y = 'Valid correlation', ax=ax2, marker = 'o', color = 'k', linestyle='')
-#     if name == 1 or name == 2:
-#         ax2.set_yticklabels([]) 
-#         ax2.set_ylabel(None)
-#     if name == 2 or name == 3: 
-#         ax1.set_ylabel(None)
-# plt.savefig('/exports/humgen/idenhond/projects/human_atac_classes/Plots/barplot_valid.png', bbox_inches='tight', dpi = 300)
-# plt.savefig('/exports/humgen/idenhond/projects/enformer/correlation/plots_paper/Plots_paper/Fig3_ATAC/barplot_valid.png', bbox_inches='tight', dpi = 300)
+    group = group.sort_values(by = ['Class', 'names'], axis = 'index')
+    print(group.shape)
+    print(group['names'])
+    ax1.tick_params(axis='x', labelrotation = 90)
+    ax2 = ax1.twinx()
+    ax2.set_ylim([0, 1])
+    sns.barplot(data = group, x = 'names', y = 'Nuclei', ax = ax1, hue = 'Class', dodge=False)
+    sns.lineplot(data = group, x = 'names', y = 'Train correlation', ax=ax2, marker = 'o', color = 'k', linestyle='')
+    ax1.set_xlabel(None)
+    ax2.set_xlabel(None)
+    if name == 1 or name == 2:
+        ax2.set_yticklabels([]) 
+        ax2.set_ylabel(None)
+        ax1.get_legend().remove()
+    if name == 2 or name == 3: 
+        ax1.set_ylabel(None)
+    if name == 3:
+        ax1.tick_params(axis='x', which='major', labelsize=8)
+plt.savefig('/exports/humgen/idenhond/projects/human_atac_classes/Plots/barplot_train.png', bbox_inches='tight', dpi = 300)
+plt.savefig('/exports/humgen/idenhond/projects/enformer/correlation/plots_paper/Plots_paper/Fig3_ATAC/barplot_train.png', bbox_inches='tight', dpi = 300)
+
+fig, axs = plt.subplots(nrows=1, ncols=len(groups), sharex=False, sharey=True, width_ratios=[1, 6, 12], constrained_layout = True, figsize = (6.4*2, 4.8*1.5)) #
+for (name, group), ax1 in zip(groups, axs):
+    ax1.set_axisbelow(True)
+    ax1.yaxis.grid(color='gray')
+    if name == 1: group['names'] = group['names'].str.split(' ').str[0]
+    if name == 2: group['names'] = group['names'].str.split(' ').str[1:-1].apply(' '.join)
+    if name == 3: group['names'] = group['names'].str.split(' ').str[1:].apply(' '.join)
+
+    group = group.sort_values(by = ['Class', 'names'], axis = 'index')
+    print(group.shape)
+    print(group['names'])
+    ax1.tick_params(axis='x', labelrotation = 90)
+    ax2 = ax1.twinx()
+    ax2.set_ylim([0, 1])
+    sns.barplot(data = group, x = 'names', y = 'Nuclei', ax = ax1, hue = 'Class', dodge=False)
+    sns.lineplot(data = group, x = 'names', y = 'Valid correlation', ax=ax2, marker = 'o', color = 'k', linestyle='')
+    ax1.set_xlabel(None)
+    ax2.set_xlabel(None)
+    if name == 1 or name == 2:
+        ax2.set_yticklabels([]) 
+        ax2.set_ylabel(None)
+        ax1.get_legend().remove()
+    if name == 2 or name == 3: 
+        ax1.set_ylabel(None)
+    if name == 3:
+        ax1.tick_params(axis='x', which='major', labelsize=8)
+plt.savefig('/exports/humgen/idenhond/projects/human_atac_classes/Plots/barplot_valid.png', bbox_inches='tight', dpi = 300)
+plt.savefig('/exports/humgen/idenhond/projects/enformer/correlation/plots_paper/Plots_paper/Fig3_ATAC/barplot_valid.png', bbox_inches='tight', dpi = 300)
 
 plt.figure()
 plt.tight_layout()
@@ -144,6 +169,11 @@ plt.savefig('/exports/humgen/idenhond/projects/enformer/correlation/plots_paper/
 plt.close()
 
 exit()
+
+
+
+
+
 fig, ax1 = plt.subplots(figsize=(12,8))
 sns.barplot(data = df_class, x = 'Class', y = 'Nuclei')
 ax2 = ax1.twinx()

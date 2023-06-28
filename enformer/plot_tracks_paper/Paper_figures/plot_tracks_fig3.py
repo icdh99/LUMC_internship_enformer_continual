@@ -4,7 +4,7 @@ import numpy as np
 import seaborn as sns
 import pandas as pd
 import random
-random.seed(25)
+random.seed(30)
 """
 Plot Enformer track prediction vs target
 """
@@ -22,7 +22,6 @@ print(df)
 print(f'30 highest test correlations:')
 df_top30 = df.nlargest(30, 'test correlation')
 print(df_top30)
-
 
 # get random number of sequences
 seq_numbers = [random.randint(0, 1937) for _ in range(20)]

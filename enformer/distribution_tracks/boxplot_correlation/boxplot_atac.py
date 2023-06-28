@@ -74,7 +74,7 @@ values_outputs_aclevel = outputs_aclevel[np.tril_indices(43, k=-1)].tolist()
 
 data = {"List": ['All'] * len(values_outputs) * 2 + ['Class'] * len(values_targets_class) * 2 + ['Subclass'] * len(values_targets_subclass) * 2 + ['AC level'] * len(values_targets_aclevel) * 2 ,
         "Value": values_targets + values_outputs + values_targets_class + values_outputs_class + values_targets_subclass + values_outputs_subclass + values_targets_aclevel + values_outputs_aclevel,
-        "Type": ['Target'] * len(values_outputs) + ['Predicted'] * len(values_outputs) + ['Target'] * len(values_outputs_class) + ['Predicted'] * len(values_outputs_class) + ['Target'] * len(values_outputs_subclass) + ['Predicted'] * len(values_outputs_subclass) + ['Target'] * len(values_outputs_aclevel) + ['Predicted'] * len(values_outputs_aclevel) }
+        "Type": ['Observed'] * len(values_outputs) + ['Predicted'] * len(values_outputs) + ['Observed'] * len(values_outputs_class) + ['Predicted'] * len(values_outputs_class) + ['Observed'] * len(values_outputs_subclass) + ['Predicted'] * len(values_outputs_subclass) + ['Observed'] * len(values_outputs_aclevel) + ['Predicted'] * len(values_outputs_aclevel) }
 
 df = pd.DataFrame(data)
 fig = plt.figure(figsize = (10.0, 5.8))

@@ -6,39 +6,80 @@ import random
 
 random.seed(18)
 
+df_subclasses = pd.read_csv('/exports/humgen/idenhond/data/basenji_preprocess/human_atac_targets_Subclass.csv', sep = '\t')
+subclass_labels = df_subclasses['Subclass'].to_list()[:14]
+
+pred = np.loadtxt('/exports/humgen/idenhond/projects/dar/correlation_per_DAR/Subclass/Predictions_test_DAR_subclass.csv',delimiter=',')
+target = np.loadtxt('/exports/humgen/idenhond/projects/dar/correlation_per_DAR/Subclass/Targets_test_DAR_subclass.csv' ,delimiter=',')
+
+print(pred.shape, target.shape)
+
+fig, ax = plt.subplots()
+plt.imshow(pred, interpolation='none', cmap='viridis', origin = 'lower', extent = [0, 2514, 0, 14], aspect=180)
+ax.set_yticks(np.arange(len(subclass_labels)) + 0.5, subclass_labels)
+# ax.set_yticklabels(subclass_labels, va='center', fontsize=5)
+ax.set_yticklabels([], va='center', fontsize=4)
+ax.xaxis.set_tick_params(labelsize=3)
+cbar = plt.colorbar(shrink=0.3, orientation = "horizontal", location = 'top', fraction=0.026, pad=0.06)
+cbar.outline.set_visible(False)
+cbar.set_ticks([0, 4])
+cbar.set_ticklabels([0, 4])
+cbar.ax.tick_params(size=0, labelsize = 5)
+cbar.ax.xaxis.set_ticks_position('bottom')
+cbar.ax.xaxis.set_label_position('bottom')
+plt.xlabel('DARs', fontsize = 4)
+plt.savefig('Heatmap_DAR_Subclass_PredictedValues.png', bbox_inches='tight', dpi = 800)
+plt.savefig('/exports/humgen/idenhond/projects/enformer/correlation/plots_paper/Plots_paper/Fig4_DAR/Heatmap_DAR_Subclass_PredictedValues.png', bbox_inches='tight', dpi = 800)
+
+
+fig, ax = plt.subplots()
+plt.imshow(target, interpolation='none', cmap='viridis', origin = 'lower', extent = [0, 2514, 0, 14], aspect=180)
+ax.set_yticks(np.arange(len(subclass_labels)) + 0.5, subclass_labels)
+ax.set_yticklabels(subclass_labels, va='center', fontsize=5)
+ax.xaxis.set_tick_params(labelsize=3)
+cbar = plt.colorbar(shrink=0.3, orientation = "horizontal", location = 'top', fraction=0.026, pad=0.06)
+cbar.outline.set_visible(False)
+cbar.set_ticks([0, 50])
+cbar.set_ticklabels([0, 50])
+cbar.ax.tick_params(size=0, labelsize = 5)
+cbar.ax.xaxis.set_ticks_position('bottom')
+cbar.ax.xaxis.set_label_position('bottom')
+plt.xlabel('DARs', fontsize = 4)
+plt.savefig('Heatmap_DAR_Subclass_TargetValues.png', bbox_inches='tight', dpi = 800)
+plt.savefig('/exports/humgen/idenhond/projects/enformer/correlation/plots_paper/Plots_paper/Fig4_DAR/Heatmap_DAR_Subclass_TargetValues.png', bbox_inches='tight', dpi = 800)
+
+
+# df_withnames = pd.read_csv('/exports/humgen/idenhond/data/basenji_preprocess/human_atac_targets_Subclass.csv', sep = '\t')
 
 df_correlations = pd.read_csv('/exports/humgen/idenhond/projects/dar/correlation_per_DAR/Subclass/Correlation_test_DAR_subclass.csv', index_col = 'Unnamed: 0')
 df_correlations['Index1'] = df_correlations.index
 print(df_correlations)
 
-pred = np.loadtxt('/exports/humgen/idenhond/projects/dar/correlation_per_DAR/Subclass/Predictions_test_DAR_subclass.csv',delimiter=',')
-print(pred.shape)  
-
-target = np.loadtxt('/exports/humgen/idenhond/projects/dar/correlation_per_DAR/Subclass/Targets_test_DAR_subclass.csv' ,delimiter=',')
-print(target.shape)
-
-df_withnames = pd.read_csv('/exports/humgen/idenhond/data/basenji_preprocess/human_atac_targets_Subclass.csv', sep = '\t')
-print(df_withnames)
-
 plt.figure()
-sns.histplot(data=df_correlations, x="Correlation")
-plt.savefig('Plots/Correlation_test_DAR_subclass.png')
+ax = sns.histplot(data=df_correlations, x="Correlation", color = 'k', element = 'step')
+plt.xlabel('Pearson correlation coefficient', fontsize=9)
+plt.ylabel('Count', fontsize=9)
+ax.tick_params(axis='both', which='major', labelsize=8)
+plt.savefig('Plots/Correlation_test_DAR_subclass.png', bbox_inches = 'tight', dpi = 300)
+plt.savefig('/exports/humgen/idenhond/projects/enformer/correlation/plots_paper/Plots_paper/Fig4_DAR/Correlation_test_DAR_subclass.png', bbox_inches = 'tight', dpi = 300)
 plt.close()
 
-df_correlations = df_correlations.sort_values(by = 'Correlation')
-print(df_correlations)
-print(f"mean: {df_correlations['Correlation'].mean()}")
-print(f"median: {df_correlations['Correlation'].median()}")
+# plt.figure()
+# sns.histplot(data=df_correlations, x="Correlation")
+# plt.savefig('Plots/Correlation_test_DAR_subclass.png')
+# plt.close()
+
+# df_correlations = df_correlations.sort_values(by = 'Correlation')
+# print(df_correlations)
+# print(f"mean: {df_correlations['Correlation'].mean()}")
+# print(f"median: {df_correlations['Correlation'].median()}")
 
 
-
-
-
-seq_nrs = [1060, 1031, 1041, 2149, 1396, 803, 363, 760, 31, 1806] # nr index in array, not original sequence nr
-random_numbers = [random.randint(0, 2514) for _ in range(1)]
-print(random_numbers)
-seq_nrs.extend(random_numbers)
-print(seq_nrs)
+# seq_nrs = [1060, 1031, 1041, 2149, 1396, 803, 363, 760, 31, 1806] # nr index in array, not original sequence nr
+# random_numbers = [random.randint(0, 2514) for _ in range(1)]
+# print(random_numbers)
+# seq_nrs.extend(random_numbers)
+# print(seq_nrs)
 
 # def normalize(x):
 #     x = np.asarray(x)
@@ -83,23 +124,23 @@ print(seq_nrs)
 
 
 
-idx_subclass = [51, 60, 61, 62, 63, 64, 43, 45, 46, 44, 48, 49, 50, 47]
-nr_true = 0
-for i, row in enumerate(df_correlations.itertuples()):
-    # print(row)
-    pred_values = pred[:, i]
-    target_values = target[:, i]
-    maximal_target_value = list(target_values).index(max(target_values))
-    idx_subclass_max = idx_subclass[maximal_target_value]
-    dar_class = df_withnames[df_withnames['Index old'] == idx_subclass_max]['Subclass'].values[0]
+# idx_subclass = [51, 60, 61, 62, 63, 64, 43, 45, 46, 44, 48, 49, 50, 47]
+# nr_true = 0
+# for i, row in enumerate(df_correlations.itertuples()):
+#     # print(row)
+#     pred_values = pred[:, i]
+#     target_values = target[:, i]
+#     maximal_target_value = list(target_values).index(max(target_values))
+#     idx_subclass_max = idx_subclass[maximal_target_value]
+#     dar_class = df_withnames[df_withnames['Index old'] == idx_subclass_max]['Subclass'].values[0]
 
-    fullname = df_correlations[df_correlations['Index1'] == i]['Full name'].values[0]
+#     fullname = df_correlations[df_correlations['Index1'] == i]['Full name'].values[0]
     
-    # print(fullname, dar_class)
-    # print(fullname == dar_class)
+#     # print(fullname, dar_class)
+#     # print(fullname == dar_class)
 
-    if fullname == dar_class:
-        nr_true += 1
-    # if i == 100: break
-print(nr_true) #1081
+#     if fullname == dar_class:
+#         nr_true += 1
+#     # if i == 100: break
+# print(nr_true) #1081
 

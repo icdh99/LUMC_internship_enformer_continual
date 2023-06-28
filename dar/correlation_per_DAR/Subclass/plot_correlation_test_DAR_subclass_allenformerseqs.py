@@ -8,78 +8,90 @@ random.seed(18)
 
 df_correlations = pd.read_csv('/exports/humgen/idenhond/projects/dar/correlation_per_DAR/Subclass/Correlation_DAR_subclass.csv', index_col = 'Unnamed: 0')
 df_correlations['Index1'] = df_correlations.index
-print(df_correlations)
 
-# df_subclasses = pd.read_csv('/exports/humgen/idenhond/data/basenji_preprocess/human_atac_targets_Subclass.csv', sep = '\t')
-# print(df_subclasses)
-# subclass_labels = df_subclasses['Subclass'].to_list()[:14]
-# print(subclass_labels)
-# print(len(subclass_labels))
+df_subclasses = pd.read_csv('/exports/humgen/idenhond/data/basenji_preprocess/human_atac_targets_Subclass.csv', sep = '\t')
+subclass_labels = df_subclasses['Subclass'].to_list()[:14]
 
 pred = np.loadtxt('/exports/humgen/idenhond/projects/dar/correlation_per_DAR/Subclass/Predictions_DAR_subclass.csv',delimiter=',')
-print(pred.shape)  
-
 target = np.loadtxt('/exports/humgen/idenhond/projects/dar/correlation_per_DAR/Subclass/Targets_DAR_subclass.csv' ,delimiter=',')
-print(target.shape)
 
-df_withnames = pd.read_csv('/exports/humgen/idenhond/data/basenji_preprocess/human_atac_targets_Subclass.csv', sep = '\t')
-print(df_withnames)
-subclass_labels = df_withnames['Subclass'].to_list()[:14]
-print(subclass_labels)
-print(len(subclass_labels))
+# df_withnames = pd.read_csv('/exports/humgen/idenhond/data/basenji_preprocess/human_atac_targets_Subclass.csv', sep = '\t')
+# subclass_labels = df_withnames['Subclass'].to_list()[:14]
+
+# plt.figure()
+# sns.histplot(data=df_correlations, x="Correlation")
+# plt.savefig('Plots/Correlation_DAR_subclass.png')
+# plt.close()
 
 plt.figure()
-sns.histplot(data=df_correlations, x="Correlation")
-plt.savefig('Plots/Correlation_DAR_subclass.png')
+ax = sns.histplot(data=df_correlations, x="Correlation", color = 'k', element = 'step')
+plt.xlabel('Pearson correlation coefficient', fontsize=9)
+plt.ylabel('Count', fontsize=9)
+ax.tick_params(axis='both', which='major', labelsize=8)
+plt.savefig('Plots/Correlation_DAR_subclass.png', bbox_inches = 'tight', dpi = 300)
+plt.savefig('/exports/humgen/idenhond/projects/enformer/correlation/plots_paper/Plots_paper/Fig4_DAR/Correlation_DAR_subclass.png', bbox_inches = 'tight', dpi = 300)
 plt.close()
 
 df_correlations = df_correlations.sort_values(by = 'Correlation')
-print(df_correlations)
-
 print(f"mean: {df_correlations['Correlation'].mean()}")
 print(f"median: {df_correlations['Correlation'].median()}")
 
-a = np.loadtxt('/exports/humgen/idenhond/projects/dar/correlation_per_DAR/Subclass/Predictions_DAR_subclass.csv', delimiter=',')
-print(a.shape)
+pred = np.loadtxt('/exports/humgen/idenhond/projects/dar/correlation_per_DAR/Subclass/Predictions_DAR_subclass.csv', delimiter=',')
+target = np.loadtxt('/exports/humgen/idenhond/projects/dar/correlation_per_DAR/Subclass/Targets_DAR_subclass.csv', delimiter=',')
 
-# fig, ax = plt.subplots()
-# plt.imshow(a, interpolation='none', cmap='viridis', origin = 'lower', extent = [0, 60262, 0, 14], aspect=4300)
-# ax.set_yticks(np.arange(len(subclass_labels)) + 0.5, subclass_labels)
-# ax.set_yticklabels(subclass_labels, va='center', fontsize=4)
-# plt.colorbar(shrink=0.5)
-# plt.savefig('Plot_Intersect_PredictedValues_allseqs.png', bbox_inches='tight', dpi = 200)
+fig, ax = plt.subplots()
+plt.imshow(pred, interpolation='none', cmap='viridis', origin = 'lower', extent = [0, 60262, 0, 14], aspect=4300)
+ax.set_yticks(np.arange(len(subclass_labels)) + 0.5, subclass_labels)
+# ax.set_yticklabels(subclass_labels, va='center', fontsize=5)
+ax.set_yticklabels([], va='center', fontsize=4)
+ax.xaxis.set_tick_params(labelsize=3)
+cbar = plt.colorbar(shrink=0.3, orientation = "horizontal", location = 'top', fraction=0.026, pad=0.06)
+cbar.outline.set_visible(False)
+cbar.set_ticks([0, 4])
+cbar.set_ticklabels([0, 4])
+cbar.ax.tick_params(size=0, labelsize = 5)
+cbar.ax.xaxis.set_ticks_position('bottom')
+cbar.ax.xaxis.set_label_position('bottom')
+plt.xlabel('DARs', fontsize = 4)
+plt.savefig('Heatmap_DAR_Subclass_PredictedValues_allseqs.png', bbox_inches='tight', dpi = 800)
+plt.savefig('/exports/humgen/idenhond/projects/enformer/correlation/plots_paper/Plots_paper/Fig4_DAR/Heatmap_DAR_Subclass_PredictedValues_allseqs.png', bbox_inches='tight', dpi = 800)
+
+fig, ax = plt.subplots()
+plt.imshow(target, interpolation='none', cmap='viridis', origin = 'lower', extent = [0, 60262, 0, 14], aspect=4300)
+ax.set_yticks(np.arange(len(subclass_labels)) + 0.5, subclass_labels)
+ax.set_yticklabels(subclass_labels, va='center', fontsize=5)
+ax.xaxis.set_tick_params(labelsize=3)
+cbar = plt.colorbar(shrink=0.3, orientation = "horizontal", location = 'top', fraction=0.026, pad=0.06)
+cbar.outline.set_visible(False)
+cbar.set_ticks([0, 55])
+cbar.set_ticklabels([0, 55])
+cbar.ax.tick_params(size=0, labelsize = 5)
+cbar.ax.xaxis.set_ticks_position('bottom')
+cbar.ax.xaxis.set_label_position('bottom')
+plt.xlabel('DARs', fontsize = 4)
+plt.savefig('Heatmap_DAR_Subclass_TargetValues_allseqs.png', bbox_inches='tight', dpi = 800)
+plt.savefig('/exports/humgen/idenhond/projects/enformer/correlation/plots_paper/Plots_paper/Fig4_DAR/Heatmap_DAR_Subclass_TargetValues_allseqs.png', bbox_inches='tight', dpi = 800)
 
 
-a_target = np.loadtxt('/exports/humgen/idenhond/projects/dar/correlation_per_DAR/Subclass/Targets_DAR_subclass.csv', delimiter=',')
-print(a_target.shape)
+# idx_subclass = [51, 60, 61, 62, 63, 64, 43, 45, 46, 44, 48, 49, 50, 47]
+# nr_true = 0
+# for i, row in enumerate(df_correlations.itertuples()):
+#     # print(row)
+#     pred_values = pred[:, i]
+#     target_values = target[:, i]
+#     maximal_target_value = list(target_values).index(max(target_values))
+#     idx_subclass_max = idx_subclass[maximal_target_value]
+#     dar_class = df_withnames[df_withnames['Index old'] == idx_subclass_max]['Subclass'].values[0]
 
-# fig, ax = plt.subplots()
-# plt.imshow(a_target, interpolation='none', cmap='viridis', origin = 'lower', extent = [0, 60262, 0, 14], aspect=4300)
-# plt.colorbar(shrink=0.5)
-# ax.set_yticks(np.arange(len(subclass_labels)) + 0.5, subclass_labels)
-# ax.set_yticklabels(subclass_labels, va='center', fontsize=4)
-# plt.savefig('Plot_Intersect_TargetValues_allseqs.png', bbox_inches='tight', dpi = 200)
-
-
-idx_subclass = [51, 60, 61, 62, 63, 64, 43, 45, 46, 44, 48, 49, 50, 47]
-nr_true = 0
-for i, row in enumerate(df_correlations.itertuples()):
-    # print(row)
-    pred_values = pred[:, i]
-    target_values = target[:, i]
-    maximal_target_value = list(target_values).index(max(target_values))
-    idx_subclass_max = idx_subclass[maximal_target_value]
-    dar_class = df_withnames[df_withnames['Index old'] == idx_subclass_max]['Subclass'].values[0]
-
-    fullname = df_correlations[df_correlations['Index1'] == i]['Full name'].values[0]
+#     fullname = df_correlations[df_correlations['Index1'] == i]['Full name'].values[0]
     
-    # print(fullname, dar_class)
-    # print(fullname == dar_class)
+#     # print(fullname, dar_class)
+#     # print(fullname == dar_class)
 
-    if fullname == dar_class:
-        nr_true += 1
-    # if i == 100: break
-print(nr_true)
+#     if fullname == dar_class:
+#         nr_true += 1
+#     # if i == 100: break
+# print(nr_true)
 
 exit()
 

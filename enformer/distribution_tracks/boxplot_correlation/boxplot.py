@@ -136,42 +136,42 @@ values_outputs_enformer_dnase_vs_chip = [item for sublist in outputs_enformer_dn
 values_outputs_enformer_dnase_vs_cage = [item for sublist in outputs_enformer_dnase_vs_cage.tolist() for item in sublist]
 values_outputs_enformer_cage_vs_chip = [item for sublist in outputs_enformer_cage_vs_chip.tolist() for item in sublist]
 
-# data = {"List": ["DNase, ATAC"] * len(values_targets_dnase) * 3 + ["ChIP"] * len(values_targets_chip) *3 + ["CAGE"] * len(values_targets_cage) *3  + ["DNase, ATAC vs ChIP"] * len(values_targets_dnase_vs_chip) *3 + ["DNase, ATAC vs CAGE"] * len(values_targets_dnase_vs_cage) *3 + ["CAGE vs ChIP"] * len(values_targets_cage_vs_chip) *3,
-#         "Value": values_targets_dnase + values_outputs_dnase + values_outputs_enformer_dnase + values_targets_chip + values_outputs_chip + values_outputs_enformer_chip + values_targets_cage + values_outputs_cage + values_outputs_enformer_cage + values_targets_dnase_vs_chip + values_outputs_dnase_vs_chip + values_outputs_enformer_dnase_vs_chip + values_targets_dnase_vs_cage + values_outputs_dnase_vs_cage + values_outputs_enformer_dnase_vs_cage + values_targets_cage_vs_chip + values_outputs_cage_vs_chip + values_outputs_enformer_cage_vs_chip,
-#         "Type": ["Target"] * len(values_targets_dnase) + ["Output Human Head"] * len(values_outputs_dnase) + ["Output Enformer-pytorch"] * len(values_outputs_dnase) + ["Target"] * len(values_targets_chip)+ ["Output Human Head"] * len(values_targets_chip) + ["Output Enformer-pytorch"] * len(values_targets_chip) + ["Target"] * len(values_targets_cage)+ ["Output Human Head"] * len(values_targets_cage) + ["Output Enformer-pytorch"] * len(values_targets_cage)  + ["Target"] * len(values_targets_dnase_vs_chip)+ ["Output Human Head"] * len(values_targets_dnase_vs_chip) + ["Output Enformer-pytorch"] * len(values_targets_dnase_vs_chip) + ["Target"] * len(values_targets_dnase_vs_cage)+ ["Output Human Head"] * len(values_targets_dnase_vs_cage) + ["Output Enformer-pytorch"] * len(values_targets_dnase_vs_cage) + ["Target"] * len(values_targets_cage_vs_chip)+ ["Output Human Head"] * len(values_targets_cage_vs_chip) + ["Output Enformer-pytorch"] * len(values_targets_cage_vs_chip) }
-# df = pd.DataFrame(data)
+data = {"List": ["DNase, ATAC"] * len(values_targets_dnase) * 3 + ["ChIP"] * len(values_targets_chip) *3 + ["CAGE"] * len(values_targets_cage) *3  + ["DNase, ATAC vs ChIP"] * len(values_targets_dnase_vs_chip) *3 + ["DNase, ATAC vs CAGE"] * len(values_targets_dnase_vs_cage) *3 + ["CAGE vs ChIP"] * len(values_targets_cage_vs_chip) *3,
+        "Value": values_targets_dnase + values_outputs_dnase + values_outputs_enformer_dnase + values_targets_chip + values_outputs_chip + values_outputs_enformer_chip + values_targets_cage + values_outputs_cage + values_outputs_enformer_cage + values_targets_dnase_vs_chip + values_outputs_dnase_vs_chip + values_outputs_enformer_dnase_vs_chip + values_targets_dnase_vs_cage + values_outputs_dnase_vs_cage + values_outputs_enformer_dnase_vs_cage + values_targets_cage_vs_chip + values_outputs_cage_vs_chip + values_outputs_enformer_cage_vs_chip,
+        "Type": ["Observed"] * len(values_targets_dnase) + ["Predicted Human Head"] * len(values_outputs_dnase) + ["Predicted Enformer-pytorch"] * len(values_outputs_dnase) + ["Observed"] * len(values_targets_chip)+ ["Predicted Human Head"] * len(values_targets_chip) + ["Predicted Enformer-pytorch"] * len(values_targets_chip) + ["Observed"] * len(values_targets_cage)+ ["Predicted Human Head"] * len(values_targets_cage) + ["Predicted Enformer-pytorch"] * len(values_targets_cage)  + ["Observed"] * len(values_targets_dnase_vs_chip)+ ["Predicted Human Head"] * len(values_targets_dnase_vs_chip) + ["Predicted Enformer-pytorch"] * len(values_targets_dnase_vs_chip) + ["Observed"] * len(values_targets_dnase_vs_cage)+ ["Predicted Human Head"] * len(values_targets_dnase_vs_cage) + ["Predicted Enformer-pytorch"] * len(values_targets_dnase_vs_cage) + ["Observed"] * len(values_targets_cage_vs_chip)+ ["Predicted Human Head"] * len(values_targets_cage_vs_chip) + ["Predicted Enformer-pytorch"] * len(values_targets_cage_vs_chip) }
+df = pd.DataFrame(data)
 
-# print(len(df['List']))
-# print(len(df['Value']))
-# print(len(df['Type']))
-# print(df.tail)
+print(len(df['List']))
+print(len(df['Value']))
+print(len(df['Type']))
+print(df.tail)
 
-# PROPS = {
-#     'boxprops':{'facecolor':'none', 'edgecolor':'black'},
-#     'medianprops':{'color':'black'},
-#     'whiskerprops':{'color':'black'},
-#     'capprops':{'color':'black'}
-# }
+PROPS = {
+    'boxprops':{'facecolor':'none', 'edgecolor':'black'},
+    'medianprops':{'color':'black'},
+    'whiskerprops':{'color':'black'},
+    'capprops':{'color':'black'}
+}
 
-# plt.figure(figsize = (5.0, 5.8)) #width, height (6.4 4.8 default)
-# flierprops = dict(marker='o', markerfacecolor='None', markersize=0.3,  markeredgecolor='black')
-# ax = sns.boxplot(data = df, x = 'Value', y = 'List', hue = 'Type', linewidth = 0.8, palette = sns.color_palette("Paired"), flierprops=flierprops)
-# sns.despine(top=True, right=True, left=False, bottom=False)
-# ax.tick_params(axis='both', which='major', labelsize=7)
-# # plt.title('Correlation between true and predicted genomic tracks per assay type')
-# plt.xlabel('Pearson Correlation Coefficient', fontsize = 7)
-# plt.ylabel(None)
-# plt.xticks([-0.50, 0, 0.50, 1], [-0.50, 0, 0.50, 1])
-# plt.legend(bbox_to_anchor=(0.01, 1), loc='upper left', prop={'size': 6})
-# plt.savefig('boxplot_enformer_tracks.png', bbox_inches = 'tight', dpi = 300)
-# plt.savefig('/exports/humgen/idenhond/projects/enformer/correlation/plots_paper/Plots_paper/Fig1_correlation_dnnhead/Boxplot_enformer_tracks.png', bbox_inches = 'tight', dpi = 300)
-# plt.close()
-# fig_width, fig_height = plt.gcf().get_size_inches()
-# print(fig_width, fig_height)
+plt.figure(figsize = (5.0, 5.8)) #width, height (6.4 4.8 default)
+flierprops = dict(marker='o', markerfacecolor='None', markersize=0.3,  markeredgecolor='black')
+ax = sns.boxplot(data = df, x = 'Value', y = 'List', hue = 'Type', linewidth = 0.8, palette = sns.color_palette("Paired"), flierprops=flierprops)
+sns.despine(top=True, right=True, left=False, bottom=False)
+ax.tick_params(axis='both', which='major', labelsize=7)
+# plt.title('Correlation between true and predicted genomic tracks per assay type')
+plt.xlabel('Pearson Correlation Coefficient', fontsize = 7)
+plt.ylabel(None)
+plt.xticks([-0.50, 0, 0.50, 1], [-0.50, 0, 0.50, 1])
+plt.legend(bbox_to_anchor=(0.01, 1), loc='upper left', prop={'size': 6})
+plt.savefig('boxplot_enformer_tracks.png', bbox_inches = 'tight', dpi = 300)
+plt.savefig('/exports/humgen/idenhond/projects/enformer/correlation/plots_paper/Plots_paper/Fig1_correlation_dnnhead/Boxplot_enformer_tracks.png', bbox_inches = 'tight', dpi = 300)
+plt.close()
+fig_width, fig_height = plt.gcf().get_size_inches()
+print(fig_width, fig_height)
 
 data = {"List": ['Histone ChIP'] * len(values_outputs_newtracks_histone) * 2 + ['TF ChIP'] * len(values_outputs_newtracks_tf) * 2  + ['DNase'] * len(values_outputs_newtracks_dnase) * 2  ,
         "Value": values_targets_newtracks_histone + values_outputs_newtracks_histone + values_targets_newtracks_tf + values_outputs_newtracks_tf + values_targets_newtracks_dnase + values_outputs_newtracks_dnase,
-        "Type": ['Target'] * len(values_outputs_newtracks_histone) + ['Output'] * len(values_outputs_newtracks_histone) +  ['Target'] * len(values_outputs_newtracks_tf) + ['Output'] * len(values_outputs_newtracks_tf) + ['Target'] * len(values_outputs_newtracks_dnase) + ['Output'] * len(values_outputs_newtracks_dnase)
+        "Type": ['Observed'] * len(values_outputs_newtracks_histone) + ['Predicted'] * len(values_outputs_newtracks_histone) +  ['Observed'] * len(values_outputs_newtracks_tf) + ['Predicted'] * len(values_outputs_newtracks_tf) + ['Observed'] * len(values_outputs_newtracks_dnase) + ['Predicted'] * len(values_outputs_newtracks_dnase)
 }
 
 df = pd.DataFrame(data)
