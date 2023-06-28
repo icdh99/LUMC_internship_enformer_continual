@@ -11,174 +11,353 @@ df_ac = pd.read_csv('/exports/humgen/idenhond/data/basenji_preprocess/human_atac
 df_ac = df_ac.loc[df_ac['Index old'].isin(idx_subclass)] #.sort_values(by = 'names')
 idx_subclass_sorted = df_ac['Index old'].to_list()
 ac_labels = df_ac['names'].to_list()
-print(len(ac_labels))
-df_counts = pd.read_csv('/exports/humgen/idenhond/data/basenji_preprocess/human_atac_targets_classes_counts.csv')
-df_ac = df_ac.merge(df_counts[['Index old', 'Nuclei']], on = 'Index old')
-print(df_ac)
+class_labels = df_ac['Class'].to_list()
 
-counts = df_ac['Nuclei'].to_numpy()
-print(counts)
 
 df_withnames = pd.read_csv('/exports/humgen/idenhond/data/basenji_preprocess/human_atac_targets_Ac-level_cluster.csv', sep = '\t')
-print(df_withnames)
-
 df_correlations = pd.read_csv('/exports/humgen/idenhond/projects/dar/correlation_per_DAR/AC-level/Correlation_DAR_aclevel.csv', index_col = 'Unnamed: 0')
 df_correlations['Index1'] = df_correlations.index
-print(df_correlations)
 
-df_correlations_subclass = pd.read_csv('/exports/humgen/idenhond/projects/dar/correlation_per_DAR/Subclass/Correlation_DAR_subclass.csv', index_col = 'Unnamed: 0')
-df_correlations_subclass['Index1'] = df_correlations_subclass.index
-print(df_correlations_subclass)
-
-df_correlations['Source'] = 'AC-level'
-df_correlations_subclass['Source'] = 'Subclass'
-
-combined_df = pd.concat([df_correlations[['Correlation', 'Source']], df_correlations_subclass[['Correlation', 'Source']]])
-combined_df = combined_df.reset_index(drop=True)
-
-print(combined_df)
-
-plt.figure()
-ax = sns.histplot(data=df_correlations, x="Correlation", color = 'k', element = 'step')
-plt.xlabel('Pearson correlation coefficient', fontsize=9)
-plt.ylabel('Count', fontsize=9)
-ax.tick_params(axis='both', which='major', labelsize=8)
-plt.savefig('Plots/Correlation_DAR_aclevel.png', bbox_inches = 'tight', dpi = 300)
-plt.savefig('/exports/humgen/idenhond/projects/enformer/correlation/plots_paper/Plots_paper/Fig4_DAR/Correlation_DAR_aclevel.png', bbox_inches = 'tight', dpi = 300)
-plt.close()
-
-plt.figure()
-sns.histplot(data=combined_df, x="Correlation", hue = 'Source', hue_order=['AC-level','Subclass'])
-plt.xlabel('Pearson correlation coefficient')
-plt.savefig('Plots/Correlation_DAR_combined.png', bbox_inches = 'tight', dpi = 300)
-plt.savefig('/exports/humgen/idenhond/projects/enformer/correlation/plots_paper/Plots_paper/Fig4_DAR/Correlation_DAR_combined.png', bbox_inches = 'tight', dpi = 300)
-plt.close()
-
-df_correlations = df_correlations.sort_values(by = 'Correlation')
-print(df_correlations)
+# plt.figure()
+# ax = sns.histplot(data=df_correlations, x="Correlation", color = 'k', element = 'step')
+# plt.xlabel('Pearson correlation coefficient', fontsize=9)
+# plt.ylabel('Count', fontsize=9)
+# ax.tick_params(axis='both', which='major', labelsize=8)
+# plt.savefig('Plots/Correlation_DAR_aclevel.png', bbox_inches = 'tight', dpi = 300)
+# plt.savefig('/exports/humgen/idenhond/projects/enformer/correlation/plots_paper/Plots_paper/Fig4_DAR/Correlation_DAR_aclevel.png', bbox_inches = 'tight', dpi = 300)
+# plt.close()
 
 print(f"mean: {df_correlations['Correlation'].mean()}")
 print(f"median: {df_correlations['Correlation'].median()}")
 
 pred = np.loadtxt('/exports/humgen/idenhond/projects/dar/correlation_per_DAR/AC-level/Predictions_DAR_aclevel.csv',delimiter=',')
 print(pred.shape)  
-
-print(pred.min())
-print(pred.max())
-
 target = np.loadtxt('/exports/humgen/idenhond/projects/dar/correlation_per_DAR/AC-level/Targets_DAR_aclevel.csv' ,delimiter=',')
 print(target.shape)
 
-fig, ax = plt.subplots()
-plt.imshow(pred, interpolation='none', cmap='viridis', origin = 'lower', extent = [0, 357690, 0, 38], aspect=9500)
-ax.set_yticks(np.arange(len(ac_labels)) + 0.5, ac_labels)
-ax.set_yticklabels([], va='center', fontsize=4)
-ax.xaxis.set_tick_params(labelsize=3)
-cbar = plt.colorbar(shrink=0.3, orientation = "horizontal", location = 'top', fraction=0.026, pad=0.06)
-cbar.outline.set_visible(False)
-cbar.set_ticks([0, 5])
-cbar.set_ticklabels([0, 5])
-cbar.ax.tick_params(size=0, labelsize = 4)
-cbar.ax.xaxis.set_ticks_position('bottom')
-cbar.ax.xaxis.set_label_position('bottom')
-plt.xlabel('DARs', fontsize = 4)
-plt.savefig('/exports/humgen/idenhond/projects/enformer/correlation/plots_paper/Plots_paper/Fig4_DAR/Plot_Intersect_PredictedValues_allseqs.png', bbox_inches='tight', dpi = 800)
-plt.savefig('Plot_Intersect_PredictedValues_allseqs.png', bbox_inches='tight', dpi = 800)
-
-fig, ax = plt.subplots()
-plt.imshow(target, interpolation='none', cmap='viridis', origin = 'lower', extent = [0, 357690, 0, 38], aspect=9500)
-ax.set_yticks(np.arange(len(ac_labels)) + 0.5, ac_labels)
-ax.set_yticklabels(ac_labels, va='center', fontsize=4)
-ax.xaxis.set_tick_params(labelsize=3)
-cbar = plt.colorbar(shrink=0.3, orientation = "horizontal", location = 'top', fraction=0.026, pad=0.06)
-cbar.outline.set_visible(False)
-cbar.set_ticks([0, 60])
-cbar.set_ticklabels([0, 60])
-cbar.ax.tick_params(size=0, labelsize = 4)
-cbar.ax.xaxis.set_ticks_position('bottom')
-cbar.ax.xaxis.set_label_position('bottom')
-plt.xlabel('DARs', fontsize = 4)
-plt.savefig('/exports/humgen/idenhond/projects/enformer/correlation/plots_paper/Plots_paper/Fig4_DAR/Plot_Intersect_TargetValues_allseqs.png', bbox_inches='tight', dpi = 800)
-plt.savefig('Plot_Intersect_TargetValues_allseqs.png', bbox_inches='tight', dpi = 800)
-
-
-# pred = np.divide(pred.T,counts).T
 # fig, ax = plt.subplots()
 # plt.imshow(pred, interpolation='none', cmap='viridis', origin = 'lower', extent = [0, 357690, 0, 38], aspect=9500)
 # ax.set_yticks(np.arange(len(ac_labels)) + 0.5, ac_labels)
+# ax.set_yticklabels([], va='center', fontsize=4)
+# ax.xaxis.set_tick_params(labelsize=3)
+# cbar = plt.colorbar(shrink=0.3, orientation = "horizontal", location = 'top', fraction=0.026, pad=0.06)
+# cbar.outline.set_visible(False)
+# cbar.set_ticks([0, 5])
+# cbar.set_ticklabels([0, 5])
+# cbar.ax.tick_params(size=0, labelsize = 4)
+# cbar.ax.xaxis.set_ticks_position('bottom')
+# cbar.ax.xaxis.set_label_position('bottom')
+# plt.xlabel('DARs', fontsize = 4)
+# plt.savefig('/exports/humgen/idenhond/projects/enformer/correlation/plots_paper/Plots_paper/Fig4_DAR/Heatmap_DAR_ACLevel_PredictedValues_allseqs.png', bbox_inches='tight', dpi = 800)
+# plt.savefig('Heatmap_DAR_ACLevel_PredictedValues_allseqs.png', bbox_inches='tight', dpi = 800)
+
+# fig, ax = plt.subplots()
+# plt.imshow(target, interpolation='none', cmap='viridis', origin = 'lower', extent = [0, 357690, 0, 38], aspect=9500)
+# ax.set_yticks(np.arange(len(ac_labels)) + 0.5, ac_labels)
 # ax.set_yticklabels(ac_labels, va='center', fontsize=4)
-# cbar = plt.colorbar(shrink=0.3)
-# cbar.ax.tick_params(labelsize=6)
-# ax.xaxis.set_tick_params(labelsize=4)
-# plt.savefig('Plot_Intersect_PredictedValues_allseqs_dividedbycellcount.png', bbox_inches='tight', dpi = 600)
+# ax.xaxis.set_tick_params(labelsize=3)
+# cbar = plt.colorbar(shrink=0.3, orientation = "horizontal", location = 'top', fraction=0.026, pad=0.06)
+# cbar.outline.set_visible(False)
+# cbar.set_ticks([0, 60])
+# cbar.set_ticklabels([0, 60])
+# cbar.ax.tick_params(size=0, labelsize = 4)
+# cbar.ax.xaxis.set_ticks_position('bottom')
+# cbar.ax.xaxis.set_label_position('bottom')
+# plt.xlabel('DARs', fontsize = 4)
+# plt.savefig('/exports/humgen/idenhond/projects/enformer/correlation/plots_paper/Plots_paper/Fig4_DAR/Heatmap_DAR_ACLevel_TargetValues_allseqs.png', bbox_inches='tight', dpi = 800)
+# plt.savefig('Heatmap_DAR_ACLevel_TargetValues_allseqs.png', bbox_inches='tight', dpi = 800)
 
+# df_correlations = df_correlations.sort_values(by = 'Correlation')
+print(df_correlations.tail(20))
+print(df_correlations[(df_correlations['Correlation'] > 0.8) & (df_correlations['Correlation'] < 0.81)])
 
-# seq_nrs = [1060, 1031, 1041, 2149, 1396, 803, 363, 760, 31, 1806] # nr index in array, not original sequence nr
-# random_numbers = [random.randint(0, 2514) for _ in range(1)]
-# seq_nrs.extend(random_numbers)
-# print(seq_nrs)
-
-# def normalize(x):
-#     x = np.asarray(x)
-#     print(x.shape)
-#     return (x - x.min()) / (np.ptp(x))
+seq_nrs = [297991, 282387, 67104, 110812, 277848, 277186, 278286, 292580, 292581, 348897,291401, 277238, 276260, 276259, 276166, 254432, 297773,137650,121419, 161259,  62981  ] # nr index in array, not original sequence nr
+random_numbers = [random.randint(0, 357690) for _ in range(1)]
+seq_nrs.extend(random_numbers)
+print(seq_nrs)
 
 # for seq_nr in seq_nrs:
-#     # seq_nr = 14108      
 #     fullname = df_correlations[df_correlations['Index1'] == seq_nr]['Full name'].values[0]
 #     original_seq_nr = df_correlations[df_correlations['Index1'] == seq_nr]['Original Seq nr'].values[0]
-#     print(fullname, original_seq_nr)
-
 #     pred_values = pred[:, seq_nr]
 #     target_values = target[:, seq_nr]
 #     maximal_target_value = list(target_values).index(max(target_values))
-
-#     idx_subclass = [51, 60, 61, 62, 63, 64, 43, 45, 46, 44, 48, 49, 50, 47]#     
+#     idx_subclass = [35, 29,  30, 36, 37, 39, 40, 33, 25, 38, 41, 42, 31, 27, 28, 32, 8, 9, 10, 5, 6, 11, 12, 13, 19, 17, 15, 16, 21, 18, 20, 3, 1, 2, 52, 56, 57, 59]
 #     idx_subclass_max = idx_subclass[maximal_target_value]
-
-#     dar_class = df_withnames[df_withnames['Index old'] == idx_subclass_max]['Subclass'].values[0]
+#     dar_class = df_withnames[df_withnames['Index old'] == idx_subclass_max]['names'].values[0]
 #     print(dar_class)
-
 #     corr = np.corrcoef(pred_values, target_values)[0, 1]
 #     print(seq_nr, fullname, corr)
-
-#     # pred_values_norm = normalize(pred_values)
-#     # target_values_norm = normalize(target_values)
-
-#     df = pd.DataFrame({'Prediction': pred_values.tolist(), 'Target': target_values.tolist()}) # , 'Prediction normalized': pred_values_norm.tolist(), 'Target normalized': target_values_norm.tolist()
-
+#     df = pd.DataFrame({'Prediction': pred_values.tolist(), 'Target': target_values.tolist()})
 #     plt.figure()
 #     sns.scatterplot(data = df, x = 'Target', y ='Prediction')
-#     plt.title(f'DAR seq {seq_nr}\n Subclass cluster DAR: {fullname} \n Correlation: {corr:.3f} \n Subclass of highest target value: {dar_class}\n Original seq nr: {original_seq_nr}')
-#     plt.savefig(f'Plots/DAR_subclass_allenformer_seq{seq_nr}.png', bbox_inches = 'tight')
+#     plt.title(f'DAR seq {seq_nr}\n AC-level cluster DAR: {fullname} \n Correlation: {corr:.3f} \n AC-level class of highest target value: {dar_class}\n Original seq nr: {original_seq_nr}')
+#     plt.savefig(f'Plots/DAR_allseqs_seq{seq_nr}.png', bbox_inches = 'tight')
 #     plt.close()
 
-#     # plt.figure()
-#     # sns.scatterplot(data = df, x = 'Target normalized', y ='Prediction normalized')
-#     # plt.title(f'DAR seq {seq_nr}\n Subclass cluster DAR: {fullname} \n Correlation: {corr:.3f} \n Subclass of highest target value: {dar_class}\n Original seq nr: {original_seq_nr}')
-#     # plt.savefig(f'Plots/DAR_subclass_seq{seq_nr}_normalized.png', bbox_inches = 'tight')
-#     # plt.close()
-
-
-
-# idx_subclass = [35, 29,  30, 36, 37, 39, 40, 33, 25, 38, 41, 42, 31, 27, 28, 32, 8, 9, 10, 5, 6, 11, 12, 13, 19, 17, 15, 16, 21, 18, 20, 3, 1, 2, 52, 56, 57, 59]
-# nr_true = 0
-# for i, row in enumerate(df_correlations.itertuples()):
-#     # print(row)
-#     # pred_values = pred[:, i]
-#     target_values = target[:, i]
-#     maximal_target_value = list(target_values).index(max(target_values))
-#     idx_subclass_max = idx_subclass[maximal_target_value]
-#     # dar_class = df_ac[df_ac['Index old'] == idx_subclass_max]['names'].values[0]
+seq_nr = 254432
+fullname = df_correlations[df_correlations['Index1'] == seq_nr]['Full name'].values[0]
+original_seq_nr = df_correlations[df_correlations['Index1'] == seq_nr]['Original Seq nr'].values[0]
+pred_values = pred[:, seq_nr]
+target_values = target[:, seq_nr]
+pred_values_sorted = np.sort(pred_values)[::-1]
+target_values_sorted = np.sort(target_values)[::-1]
+target_values_sorted = target_values_sorted[:5]
+# print(pred_values.shape)
+# print(fullname)
+# for value in target_values_sorted:
+#     index = list(target_values).index(value)
+#     idx_subclass_max = idx_subclass[index]
 #     dar_class = df_withnames[df_withnames['Index old'] == idx_subclass_max]['names'].values[0]
+#     print(index, idx_subclass_max, dar_class, value)
+maximal_target_value = list(target_values).index(max(target_values))
+idx_subclass = [35, 29,  30, 36, 37, 39, 40, 33, 25, 38, 41, 42, 31, 27, 28, 32, 8, 9, 10, 5, 6, 11, 12, 13, 19, 17, 15, 16, 21, 18, 20, 3, 1, 2, 52, 56, 57, 59]
+idx_subclass_max = idx_subclass[maximal_target_value]
+dar_class = df_withnames[df_withnames['Index old'] == idx_subclass_max]['names'].values[0]
+corr = np.corrcoef(pred_values, target_values)[0, 1]
+df = pd.DataFrame({'Prediction': pred_values.tolist(), 'Target': target_values.tolist()})
+df['class'] = class_labels
+plt.figure(figsize=(3,3))
+plt.xlabel('Observed', fontsize = 8)
+plt.ylabel('Predicted', fontsize = 8)
+plt.xticks(fontsize = 7)
+plt.yticks(fontsize = 7)
+ax = sns.scatterplot(data = df, x = 'Target', y ='Prediction', color = 'k', hue = 'class')
+ax.text(target_values_sorted[0], pred_values_sorted[0], 'Oligo OPC L1-6 PDGFRA COL20A1  ', fontsize=6, ha = 'right', va = 'center')
+ax.text(target_values_sorted[3], pred_values_sorted[1],f'Astro Astro L1-6 FGFR3 PLCG1  ', fontsize=6, ha = 'right', va = 'center')
+ax.legend(loc='lower left', bbox_to_anchor=(1, 0), fontsize = 7)
+plt.text(0.87, 0.01, f'{corr:.3f}', transform=ax.transAxes, fontsize = 7)
+plt.title(f'DAR cluster: \nNon-Neuronal, Oligo, \nOPC L1-6 PDGFRA COL20A1', fontsize = 7)
+plt.savefig(f'Plots/DAR_allseqs_seq{seq_nr}_opgemaakt.png', bbox_inches = 'tight', dpi = 300)
+plt.savefig(f'/exports/humgen/idenhond/projects/enformer/correlation/plots_paper/Plots_paper/Fig4_DAR/DAR_allseqs_seq{seq_nr}_opgemaakt.png', bbox_inches = 'tight', dpi = 300)
+plt.close()
 
-#     fullname = df_correlations[df_correlations['Index1'] == i]['Full name'].values[0]
-    
-#     # print(fullname, dar_class)
-#     # print(fullname == dar_class)
+seq_nr = 291401
+fullname = df_correlations[df_correlations['Index1'] == seq_nr]['Full name'].values[0]
+original_seq_nr = df_correlations[df_correlations['Index1'] == seq_nr]['Original Seq nr'].values[0]
+pred_values = pred[:, seq_nr]
+target_values = target[:, seq_nr]
+pred_values_sorted = np.sort(pred_values)[::-1]
+target_values_sorted = np.sort(target_values)[::-1]
+target_values_sorted = target_values_sorted[:5]
+print(pred_values.shape)
+print(fullname)
+for value in target_values_sorted:
+    index = list(target_values).index(value)
+    idx_subclass_max = idx_subclass[index]
+    dar_class = df_withnames[df_withnames['Index old'] == idx_subclass_max]['names'].values[0]
+    print(index, idx_subclass_max, dar_class, value)
+maximal_target_value = list(target_values).index(max(target_values))
+idx_subclass = [35, 29,  30, 36, 37, 39, 40, 33, 25, 38, 41, 42, 31, 27, 28, 32, 8, 9, 10, 5, 6, 11, 12, 13, 19, 17, 15, 16, 21, 18, 20, 3, 1, 2, 52, 56, 57, 59]
+idx_subclass_max = idx_subclass[maximal_target_value]
+dar_class = df_withnames[df_withnames['Index old'] == idx_subclass_max]['names'].values[0]
+corr = np.corrcoef(pred_values, target_values)[0, 1]
+df = pd.DataFrame({'Prediction': pred_values.tolist(), 'Target': target_values.tolist()})
+df['class'] = class_labels
+plt.figure(figsize=(3,3))
+plt.xlabel('Observed', fontsize = 8)
+plt.ylabel('Predicted', fontsize = 8)
+plt.xticks(fontsize = 7)
+plt.yticks(fontsize = 7)
+ax = sns.scatterplot(data = df, x = 'Target', y ='Prediction', color = 'k', hue = 'class')
+ax.text(target_values_sorted[0], pred_values_sorted[0], 'Oligo L2-6 OPALIN LOC101927459  ', fontsize=6, ha = 'right', va = 'center')
+ax.text(target_values_sorted[1], pred_values_sorted[1],f'Oligo OPC L1-6 PDGFRA COL20A1  ', fontsize=6, ha = 'right', va = 'center')
+plt.text(0.87, 0.01, f'{corr:.3f}', transform=ax.transAxes, fontsize = 7)
+plt.title(f'DAR cluster: \nNon-Neuronal Oligo, Oligo, \nL2-6 OPALIN LOC101927459', fontsize = 7)
+ax.legend().set_visible(False)
+plt.savefig(f'Plots/DAR_allseqs_seq{seq_nr}_opgemaakt.png', bbox_inches = 'tight', dpi = 300)
+plt.savefig(f'/exports/humgen/idenhond/projects/enformer/correlation/plots_paper/Plots_paper/Fig4_DAR/DAR_allseqs_seq{seq_nr}_opgemaakt.png', bbox_inches = 'tight', dpi = 300)
+plt.close()
 
-#     if fullname == dar_class:
-#         nr_true += 1
-#     # if i == 100: break
-# print(nr_true) 
 
+seq_nr = 121419
+fullname = df_correlations[df_correlations['Index1'] == seq_nr]['Full name'].values[0]
+original_seq_nr = df_correlations[df_correlations['Index1'] == seq_nr]['Original Seq nr'].values[0]
+pred_values = pred[:, seq_nr]
+target_values = target[:, seq_nr]
+print(pred_values.shape)
+print(fullname)
+pred_values_sorted = np.sort(pred_values)[::-1]
+target_values_sorted = np.sort(target_values)[::-1]
+target_values_sorted = target_values_sorted[:5]
+print(target_values_sorted)
+for value in target_values_sorted:
+    index = list(target_values).index(value)
+    idx_subclass_max = idx_subclass[index]
+    dar_class = df_withnames[df_withnames['Index old'] == idx_subclass_max]['names'].values[0]
+    print(index, idx_subclass_max, dar_class, value)
+maximal_target_value = list(target_values).index(max(target_values))
+idx_subclass = [35, 29,  30, 36, 37, 39, 40, 33, 25, 38, 41, 42, 31, 27, 28, 32, 8, 9, 10, 5, 6, 11, 12, 13, 19, 17, 15, 16, 21, 18, 20, 3, 1, 2, 52, 56, 57, 59]
+idx_subclass_max = idx_subclass[maximal_target_value]
+dar_class = df_withnames[df_withnames['Index old'] == idx_subclass_max]['names'].values[0]
+corr = np.corrcoef(pred_values, target_values)[0, 1]
+df = pd.DataFrame({'Prediction': pred_values.tolist(), 'Target': target_values.tolist()})
+plt.figure(figsize=(3,3))
+plt.xlabel('Observed', fontsize = 8)
+plt.ylabel('Predicted', fontsize = 8)
+plt.xticks(fontsize = 7)
+plt.yticks(fontsize = 7)
+df['class'] = class_labels
+ax = sns.scatterplot(data = df, x = 'Target', y ='Prediction', color = 'k', hue = 'class')
+ax.text(target_values_sorted[0], pred_values_sorted[1], 'L2/3 IT Exc L2 LAMP5 KCNG3  ', fontsize=6, ha = 'right', va = 'center')
+ax.text(target_values_sorted[1], pred_values_sorted[0],f'  L2/3 IT Exc L2 LINC00507 GLRA3  ', fontsize=6, ha = 'right', va = 'center')
+# ax.text(target_values_sorted[2], pred_values_sorted[2]-0.015, f'L2/3 IT Exc L2-3 LINC00507 DSG3', fontsize=7, ha = 'right', va = 'top')
+ax.legend().set_visible(False)
+plt.text(0.87, 0.01, f'{corr:.3f}', transform=ax.transAxes, fontsize = 7)
+plt.title(f'DAR cluster: \nGlutamatergic, L2/3 IT, \nExc L2 LAMP5 KCNG3', fontsize = 7)
+plt.savefig(f'Plots/DAR_allseqs_seq{seq_nr}_opgemaakt.png', bbox_inches = 'tight', dpi = 300)
+plt.savefig(f'/exports/humgen/idenhond/projects/enformer/correlation/plots_paper/Plots_paper/Fig4_DAR/DAR_allseqs_seq{seq_nr}_opgemaakt.png', bbox_inches = 'tight', dpi = 300)
+plt.close()
+
+
+
+seq_nr = 297773
+fullname = df_correlations[df_correlations['Index1'] == seq_nr]['Full name'].values[0]
+original_seq_nr = df_correlations[df_correlations['Index1'] == seq_nr]['Original Seq nr'].values[0]
+pred_values = pred[:, seq_nr] # (38,)
+target_values = target[:, seq_nr]
+print(pred_values.shape)
+print(fullname)
+pred_values_sorted = np.sort(pred_values)[::-1]
+target_values_sorted = np.sort(target_values)
+target_values_sorted = target_values_sorted[::-1]
+target_values_sorted = target_values_sorted[:5]
+for value in target_values_sorted:
+    index = list(target_values).index(value)
+    idx_subclass_max = idx_subclass[index]
+    dar_class = df_withnames[df_withnames['Index old'] == idx_subclass_max]['names'].values[0]
+    print(index, idx_subclass_max, dar_class)
+maximal_target_value = list(target_values).index(max(target_values))
+idx_subclass = [35, 29,  30, 36, 37, 39, 40, 33, 25, 38, 41, 42, 31, 27, 28, 32, 8, 9, 10, 5, 6, 11, 12, 13, 19, 17, 15, 16, 21, 18, 20, 3, 1, 2, 52, 56, 57, 59]
+idx_subclass_max = idx_subclass[maximal_target_value]
+dar_class = df_withnames[df_withnames['Index old'] == idx_subclass_max]['names'].values[0]
+corr = np.corrcoef(pred_values, target_values)[0, 1]
+df = pd.DataFrame({'Prediction': pred_values.tolist(), 'Target': target_values.tolist()})
+plt.figure(figsize=(3,3))
+plt.xlabel('Observed', fontsize = 8)
+plt.ylabel('Predicted', fontsize = 8)
+plt.xticks(fontsize = 7)
+plt.yticks(fontsize = 7)
+df['class'] = class_labels
+ax = sns.scatterplot(data = df, x = 'Target', y ='Prediction', color = 'k', hue = 'class')
+ax.text(target_values_sorted[0], pred_values_sorted[0],'OPC L1-6 PDGFRA COL20A1  ', fontsize=6, ha = 'right', va = 'center')
+ax.text(target_values_sorted[1], pred_values_sorted[4],f'\nOligo L2-6\nOPALIN\nLOC101927459  ', fontsize=6, ha = 'left', va = 'top')
+plt.text(0.87, 0.01, f'{corr:.3f}', transform=ax.transAxes, fontsize = 7)
+# plt.title(f'DAR seq {seq_nr}\n AC-level cluster DAR: {fullname} \n Correlation: {corr:.3f} \n AC-level class of highest target value: {dar_class}\n Original seq nr: {original_seq_nr}')
+plt.title(f'DAR cluster: \nNon-Neuronal Oligo, Oligo, \nL2-6 OPALIN LOC101927459', fontsize = 7)
+ax.legend().set_visible(False)
+plt.savefig(f'Plots/DAR_allseqs_seq{seq_nr}_opgemaakt.png', bbox_inches = 'tight', dpi = 300)
+plt.savefig(f'/exports/humgen/idenhond/projects/enformer/correlation/plots_paper/Plots_paper/Fig4_DAR/DAR_allseqs_seq{seq_nr}_opgemaakt.png', bbox_inches = 'tight', dpi = 300)
+plt.close()
+
+seq_nr = 31
+fullname = df_correlations[df_correlations['Index1'] == seq_nr]['Full name'].values[0]
+original_seq_nr = df_correlations[df_correlations['Index1'] == seq_nr]['Original Seq nr'].values[0]
+pred_values = pred[:, seq_nr] # (38,)
+target_values = target[:, seq_nr]
+print(pred_values.shape)
+print(fullname)
+pred_values_sorted = np.sort(pred_values)[::-1]
+target_values_sorted = np.sort(target_values)
+target_values_sorted = target_values_sorted[::-1]
+target_values_sorted = target_values_sorted[:5]
+for value in target_values_sorted:
+    index = list(target_values).index(value)
+    idx_subclass_max = idx_subclass[index]
+    dar_class = df_withnames[df_withnames['Index old'] == idx_subclass_max]['names'].values[0]
+    print(index, idx_subclass_max, dar_class)
+maximal_target_value = list(target_values).index(max(target_values))
+idx_subclass = [35, 29,  30, 36, 37, 39, 40, 33, 25, 38, 41, 42, 31, 27, 28, 32, 8, 9, 10, 5, 6, 11, 12, 13, 19, 17, 15, 16, 21, 18, 20, 3, 1, 2, 52, 56, 57, 59]
+idx_subclass_max = idx_subclass[maximal_target_value]
+dar_class = df_withnames[df_withnames['Index old'] == idx_subclass_max]['names'].values[0]
+corr = np.corrcoef(pred_values, target_values)[0, 1]
+df = pd.DataFrame({'Prediction': pred_values.tolist(), 'Target': target_values.tolist()})
+plt.figure(figsize=(3,3))
+plt.xlabel('Observed', fontsize = 8)
+plt.ylabel('Predicted', fontsize = 8)
+plt.xticks(fontsize = 7)
+plt.yticks(fontsize = 7)
+df['class'] = class_labels
+ax = sns.scatterplot(data = df, x = 'Target', y ='Prediction', color = 'k', hue = 'class')
+ax.text(target_values_sorted[0], pred_values_sorted[0],'LAMP5 Inh L1-6 LAMP5 KIRREL  ', fontsize=6, ha = 'right', va = 'center')
+# ax.text(target_values_sorted[1], pred_values_sorted[4],f'  Oligo L2-6\n  OPALIN\n  LOC101927459  ', fontsize=6, ha = 'left', va = 'top')
+plt.text(0.87, 0.01, f'{corr:.3f}', transform=ax.transAxes, fontsize = 7)
+# plt.title(f'DAR seq {seq_nr}\n AC-level cluster DAR: {fullname} \n Correlation: {corr:.3f} \n AC-level class of highest target value: {dar_class}\n Original seq nr: {original_seq_nr}')
+plt.title(f'DAR cluster: \nGABAergic, LAMP5, \nInh L1-6 LAMP5 KIRREL', fontsize = 7)
+ax.legend().set_visible(False)
+plt.savefig(f'Plots/DAR_allseqs_seq{seq_nr}_opgemaakt.png', bbox_inches = 'tight', dpi = 300)
+plt.savefig(f'/exports/humgen/idenhond/projects/enformer/correlation/plots_paper/Plots_paper/Fig4_DAR/DAR_allseqs_seq{seq_nr}_opgemaakt.png', bbox_inches = 'tight', dpi = 300)
+plt.close()
+
+# seq_nr = 297991
+# fullname = df_correlations[df_correlations['Index1'] == seq_nr]['Full name'].values[0]
+# original_seq_nr = df_correlations[df_correlations['Index1'] == seq_nr]['Original Seq nr'].values[0]
+# pred_values = pred[:, seq_nr] # (38,)
+# target_values = target[:, seq_nr]
+# print(pred_values.shape)
+# print(fullname)
+# pred_values_sorted = np.sort(pred_values)[::-1]
+# target_values_sorted = np.sort(target_values)
+# target_values_sorted = target_values_sorted[::-1]
+# target_values_sorted = target_values_sorted[:5]
+# for value in target_values_sorted:
+#     index = list(target_values).index(value)
+#     idx_subclass_max = idx_subclass[index]
+#     dar_class = df_withnames[df_withnames['Index old'] == idx_subclass_max]['names'].values[0]
+#     print(index, idx_subclass_max, dar_class)
+# maximal_target_value = list(target_values).index(max(target_values))
+# idx_subclass = [35, 29,  30, 36, 37, 39, 40, 33, 25, 38, 41, 42, 31, 27, 28, 32, 8, 9, 10, 5, 6, 11, 12, 13, 19, 17, 15, 16, 21, 18, 20, 3, 1, 2, 52, 56, 57, 59]
+# idx_subclass_max = idx_subclass[maximal_target_value]
+# dar_class = df_withnames[df_withnames['Index old'] == idx_subclass_max]['names'].values[0]
+# corr = np.corrcoef(pred_values, target_values)[0, 1]
+# df = pd.DataFrame({'Prediction': pred_values.tolist(), 'Target': target_values.tolist()})
+# plt.figure(figsize=(3,3))
+# plt.xlabel('Observed', fontsize = 6)
+# plt.ylabel('Predicted', fontsize = 6)
+# plt.xticks(fontsize = 6)
+# plt.yticks(fontsize = 6)
+# df['class'] = class_labels
+# ax = sns.scatterplot(data = df, x = 'Target', y ='Prediction', color = 'k', hue = 'class')
+# plt.text(0.85, 0.01, f'{corr:.3f}', transform=ax.transAxes, fontsize = 7)
+# plt.title(f'DAR cluster: \nNon-Neuronal, Oligo,\nOligo L2-6 OPALIN LOC101927459', fontsize = 7)
+# ax.legend().set_visible(False)
+# plt.savefig(f'Plots/DAR_allseqs_seq{seq_nr}_opgemaakt.png', bbox_inches = 'tight', dpi = 300)
+# plt.savefig(f'/exports/humgen/idenhond/projects/enformer/correlation/plots_paper/Plots_paper/Fig4_DAR/DAR_allseqs_seq{seq_nr}_opgemaakt.png', bbox_inches = 'tight', dpi = 300)
+# plt.close()
+
+seq_nr = 1041
+fullname = df_correlations[df_correlations['Index1'] == seq_nr]['Full name'].values[0]
+original_seq_nr = df_correlations[df_correlations['Index1'] == seq_nr]['Original Seq nr'].values[0]
+pred_values = pred[:, seq_nr] # (38,)
+target_values = target[:, seq_nr]
+print(pred_values.shape)
+print(fullname)
+pred_values_sorted = np.sort(pred_values)[::-1]
+target_values_sorted = np.sort(target_values)
+target_values_sorted = target_values_sorted[::-1]
+target_values_sorted = target_values_sorted[:5]
+for value in target_values_sorted:
+    index = list(target_values).index(value)
+    idx_subclass_max = idx_subclass[index]
+    dar_class = df_withnames[df_withnames['Index old'] == idx_subclass_max]['names'].values[0]
+    print(index, idx_subclass_max, dar_class)
+maximal_target_value = list(target_values).index(max(target_values))
+idx_subclass = [35, 29,  30, 36, 37, 39, 40, 33, 25, 38, 41, 42, 31, 27, 28, 32, 8, 9, 10, 5, 6, 11, 12, 13, 19, 17, 15, 16, 21, 18, 20, 3, 1, 2, 52, 56, 57, 59]
+idx_subclass_max = idx_subclass[maximal_target_value]
+dar_class = df_withnames[df_withnames['Index old'] == idx_subclass_max]['names'].values[0]
+corr = np.corrcoef(pred_values, target_values)[0, 1]
+df = pd.DataFrame({'Prediction': pred_values.tolist(), 'Target': target_values.tolist()})
+plt.figure(figsize=(3,3))
+plt.xlabel('Observed', fontsize = 6)
+plt.ylabel('Predicted', fontsize = 6)
+plt.xticks(fontsize = 6)
+plt.yticks(fontsize = 6)
+df['class'] = class_labels
+ax = sns.scatterplot(data = df, x = 'Target', y ='Prediction', color = 'k', hue = 'class')
+ax.text(target_values_sorted[0], pred_values_sorted[8],'LAMP5 Inh L1-6 LAMP5 KIRREL  ', fontsize=6, ha = 'right', va = 'center')
+plt.text(0.87, 0.01, f'{corr:.3f}', transform=ax.transAxes, fontsize = 7)
+plt.title(f'DAR cluster: \nGABAergic, LAMP5, \nInh L1-6 LAMP5 KIRREL', fontsize = 7)
+ax.legend().set_visible(False)
+plt.savefig(f'Plots/DAR_allseqs_seq{seq_nr}_opgemaakt.png', bbox_inches = 'tight', dpi = 300)
+plt.savefig(f'/exports/humgen/idenhond/projects/enformer/correlation/plots_paper/Plots_paper/Fig4_DAR/DAR_allseqs_seq{seq_nr}_opgemaakt.png', bbox_inches = 'tight', dpi = 300)
+plt.close()
