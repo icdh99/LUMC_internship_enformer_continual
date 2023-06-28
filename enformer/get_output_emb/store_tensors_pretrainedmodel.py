@@ -19,13 +19,13 @@ print('Using device (set to GPU if available):', device)
 """
 Prepare dataframe 
 """
-subset = str(sys.argv[1])
+subset = str(sys.argv[1]) # test, valid or train 
 print(f'generating enformer output for {subset} sequences')
 
 colnames=['chr', 'start', 'end', 'category'] 
-df = pd.read_csv('/exports/humgen/idenhond/data/Basenji/sequences.bed', sep='\t', names=colnames)
+df = pd.read_csv('/exports/humgen/idenhond/data/Basenji/sequences.bed', sep='\t', names=colnames) # Enformer sequences bed file
 print(f'number of sequences: {df.shape}')
-df_subset = df[df['category'] == subset].reset_index(drop=True)
+df_subset = df[df['category'] == subset].reset_index(drop=True) # subset the bed file to train, test or valid
 print(f'number of {subset} sequences: {df_subset.shape}')
 
 if not os.path.exists(f'/exports/humgen/idenhond/projects/enformer/get_output_emb/tmp_bed_{subset}'):
@@ -42,10 +42,10 @@ filter_train = lambda df: df.filter(pl.col('column_4') == subset)
 
 model = Enformer.from_pretrained("EleutherAI/enformer-official-rough")
 model = model.eval().cuda()
-# model = model.eval()
 
 """
 store output and embeddings for each test/valid sequence seperately
+we do this for each sequence individually, as otherwise the ds object is too big. 
 """
 
 t = 0 
@@ -99,7 +99,6 @@ for row in df_subset.itertuples():
     # print(f"Device embeddings is stored on: {embeddings.device}\n")
 
     if subset == 'valid':
-        # torch.save(embeddings, f'/exports/humgen/idenhond/data/Enformer_validation/Enformer_validation_embeddings_newmodel/embeddings_seq{t}.pt')
         torch.save(embeddings, f'/exports/humgen/idenhond/data/Enformer_validation/Enformer_validation_embeddings_pretrainedmodel_perseq/embeddings_seq{t}.pt')
 
     #     # torch.save(output, f'/exports/humgen/idenhond/data/Enformer_validation/Enformer_validation_embeddings_newmodel/output_seq{t}.pt')

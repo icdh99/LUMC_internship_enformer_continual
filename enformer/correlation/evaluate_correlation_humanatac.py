@@ -22,18 +22,18 @@ from torchmetrics.regression.pearson import PearsonCorrCoef
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print('Using device (set to GPU if available):', device)
 
-subset = str(sys.argv[1])
-max_steps = int(sys.argv[2])
+subset = str(sys.argv[1])   # train, test, valid
+max_steps = int(sys.argv[2]) # -1 = all sequences
 print(f'Subset: {subset}')
 print(f'Max steps: {max_steps}')
 
-# load stored outputs
+# load stored embeddings
 if subset == 'test':
   tfr_file = f'/exports/archive/hg-funcgenom-research/idenhond/Enformer_test/Enformer_test_embeddings_newmodel/embeddings_test_pretrainedmodel.pt'
-  tensor_out = torch.load(tfr_file, map_location=torch.device('cpu')) 
-  print(f'shape of test output tensor: {tensor_out.shape}\n')
+  tensor_out = torch.load(tfr_file, map_location=torch.device('cpu')) # should be named tensor_embeddings
+  print(f'shape of test embeddings tensor: {tensor_out.shape}\n')
 
-print(f'Time after loading output tensor: {datetime.now() - start}') 
+print(f'Time after loading embeddings tensor: {datetime.now() - start}') 
 
 SEQUENCE_LENGTH = 196_608
 BIN_SIZE = 128
@@ -41,7 +41,6 @@ TARGET_LENGTH = 896
 
 """
 base dir is now folder data/Basenji with human stuff
-TODO: make into seperate directories for human and mouse, similar to google cloud storage
 """
 
 human_fasta_path = '/exports/humgen/idenhond/genomes/hg38.ml.fa'
@@ -54,7 +53,7 @@ class model(pl.LightningModule):
 		# define model
 		super(model, self).__init__()
 		self.linear = nn.Linear(in_features = 3072, out_features = 66, bias = True) #ADJUST NUMBER OF OUTPUT FEATURES
-		self.softplus = nn.Softplus(beta = 1, threshold = 20)	# default values for nn.Softplus()
+		self.softplus = nn.Softplus(beta = 1, threshold = 20)	
 		self.lr = 1e-4
 		self.loss = nn.PoissonNLLLoss()
 		self.train_log = []
@@ -258,8 +257,8 @@ def compute_correlation(model, organism:str="human", subset:str=subset, max_step
   total = len(ds.region_df) # number of records
   print(f'number of records: {total}')
   dl = torch.utils.data.DataLoader(ds, num_workers=0, batch_size=1)
-  corr_coef = MeanPearsonCorrCoefPerChannel(n_channels=66) # ADJUST NUMBER OF CHANNELS TO NR OF TRACKS
-  n_steps = total if max_steps <= 0 else max_steps
+  corr_coef = MeanPearsonCorrCoefPerChannel(n_channels=66) # ADJUST NUMBER OF CHANNELS TO NR OF TRACKS, should match the number of tracks in the tfr file
+  n_steps = total if max_steps <= 0 else max_steps    # this is the second argument of the script (-1 for all sequences)
   print(f'number of steps to calculate correlation coefficient: {n_steps}')
   for i,batch in enumerate(tqdm(dl, total=n_steps)):
     if max_steps > 0 and i >= max_steps:
@@ -280,10 +279,10 @@ def compute_correlation(model, organism:str="human", subset:str=subset, max_step
       pred1 = model(emb)
       pred = torch.unsqueeze(pred1, 0)
     #   print(f'pred shape: {pred.shape}')
+      # store output if desired
       # if subset == 'train': torch.save(pred, f'/exports/humgen/idenhond/data/Enformer_train/Enformer_train_output_humanatac/output_seq{i+1}.pt')
       if subset == 'test': torch.save(pred, f'/exports/humgen/idenhond/data/Enformer_test/Enformer_test_output_humanatac/output_seq{i+1}.pt')
       # if subset == 'valid': torch.save(pred, f'/exports/humgen/idenhond/data/Enformer_validation/Enformer_validation_output_humanatac/output_seq{i+1}.pt')
-
       corr_coef(preds=pred.cpu(), target=target.cpu())
     #   print(i)
 

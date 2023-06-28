@@ -24,6 +24,6 @@ echo 'Job folder: ' $SLURM_SUBMIT_DIR; echo
 
 # arg 1 = subset
 subset=$1
-echo 'Subset: ' $subset
+echo 'Subset: ' $subset # test, train or validss
 python $script $subset
 

@@ -1,3 +1,21 @@
+HOW TO EVALUATE THE PERFORMANCE OF THE HUMAN HEAD MODEL TRAINED ON THE snATAC TRACKS
+The script /exports/humgen/idenhond/projects/enformer/correlation/evaluate_correlation_humanatac.sh evaluates the performance of this model, and takes two arguments: the train/test/valid subset, and the number of steps. This indicates the number of sequences to calculate the correlations for. use -1 to select all sequences. 
+
+This script is based on the tf records, but does not need that anymore. I did not remove this from the script so it is a bit messy! 
+It loads the trained model and the model class. The BasenjiDataSet class is used to read the tf records. The compute_correlation() function calculates the correlation per sequence for all tracks between the observations and predictions. 
+The script stores the corelation per track in the following files:
+/exports/humgen/idenhond/data/evaluate_correlation/correlation_per_track_test_humanatac.csv
+/exports/humgen/idenhond/data/evaluate_correlation/correlation_per_track_train_humanatac.csv
+/exports/humgen/idenhond/data/evaluate_correlation/correlation_per_track_valid_humanatac.csv
+The correlation per subset can be found in the slurm output files: e.g. /exports/humgen/idenhond/projects/enformer/correlation/Reports/14795261.evaluate_correlation_humanatac.sh.out
+
+The script /exports/humgen/idenhond/projects/enformer/correlation/analyse_tracks_humanatac.py makes some plots about the correlation per track.
+
+
+
+
+
+Rest of the Readme: 
 This folder contains scripts to reproduce the correlation results from the Enformer paper
 
 Code is adjusted from ```` /exports/humgen/idenhond/enformer_dev/enformer-pytorch/evaluate_enformer_pytorch_correlation.ipynb ```` to work with local file structure

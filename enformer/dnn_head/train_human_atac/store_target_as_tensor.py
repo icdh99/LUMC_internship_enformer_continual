@@ -22,7 +22,7 @@ print(f'subset: {subset}')
 def make_parser(): #, rna_mode
     def parse_proto(example_protos):
 
-        NUM_TRACKS = 66
+        NUM_TRACKS = 66     # ADJUST ACCORDING TO NUMBER OF TRACKS
         """Parse TFRecord protobuf."""
         feature_spec = {
         'sequence': tf.io.FixedLenFeature([], dtype = tf.string),

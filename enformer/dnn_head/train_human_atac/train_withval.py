@@ -28,7 +28,6 @@ def main():
     print(f'parameters: \n batch size: {BATCH_SIZE} \n max epochs: {EPOCHS} \n strategy: {strategy} \n num workers: {NUM_WORKERS}\n')
 
     ### make partition dictionary with IDs for train and validation
-    # TODO: add validation data
     partition_indices = {}
     partition_indices['train'] = list(range(1, 34021+1))
     partition_indices['val'] = list(range(1, 2213+1))
@@ -58,8 +57,8 @@ def main():
     print(f'folder where model is stored: ./model_{date_time}')
 
     # tensorboard logger
-    logger = TensorBoardLogger('tb_logs', name = 'human_atac')
-    print('tb logs folder: tb_logs/human_atac')
+    logger = TensorBoardLogger('tb_logs', name = 'human_atac') # adjust name model
+    print('tb logs folder: tb_logs/human_atac') # adjust name model
     print(f'logger version: {logger.version}\n')
 
     # define callbacks 
