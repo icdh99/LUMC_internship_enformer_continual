@@ -40,8 +40,12 @@ This is further described in /exports/humgen/idenhond/projects/dar/README.md
 
 Other important scripts
 Boxplots as in figure 1D, 2B, and 3C are generated with /exports/humgen/idenhond/projects/enformer/distribution_tracks/boxplot_correlation/boxplot.py and /exports/humgen/idenhond/projects/enformer/distribution_tracks/boxplot_correlation/boxplot_atac.py.
+
 Predicted and observed tracks are made with the scripts in /exports/humgen/idenhond/projects/enformer/plot_tracks_paper/Paper_figures
+
 Analysis and visualization of the weights learned by Enformer-pytorch and the human head model is done in /exports/humgen/idenhond/projects/enformer/weigths/plot_weights_figure1.py
+
+Plots for the report are made with the scripts in /exports/humgen/idenhond/projects/enformer/correlation/plots_paper
 
 Human ATAC clusters
 As I trained the human head model for snATAC data on 66 clusters and removed some of the clusters in the analysis, here is some guidance on how to analyse the predictions of the snATAC model.
