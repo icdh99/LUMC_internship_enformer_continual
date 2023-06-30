@@ -22,7 +22,6 @@ blacklist=/exports/humgen/idenhond/data/Basenji/hg38.blacklist.rep.bed
 unmappable=/exports/humgen/idenhond/data/Basenji/umap_k24_t10_l32.bed #HUMAN
 txt_file=/exports/humgen/idenhond/data/basenji_preprocess/targets_human_atac.txt
 
-
 # ADJUST NORMALIZATION OPTION
 /exports/humgen/idenhond/basenji_dev/basenji/bin/basenji_data.py -g $bed_file -b $blacklist -u $unmappable -l 131072 --local --restart --crop 8192 -o $output_dir -p 8 -w 128 --normalize false $genome $txt_file
 
