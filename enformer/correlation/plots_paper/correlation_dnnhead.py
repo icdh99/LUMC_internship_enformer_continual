@@ -107,6 +107,7 @@ for i, (key, value) in enumerate(df['assay type split ChIP'].value_counts().to_d
     ax[3].text(0.1, 0.95, '0.574', fontsize = 8, ha='center', va='center', transform=ax[3].transAxes)
     ax[3].text(0.9, 0.03, '0.688', fontsize = 8, ha='center', va='center', transform=ax[3].transAxes)
 plt.figtext(.5, .1, 'Enformer-pytorch', fontsize=9, ha='center')
+plt.figtext(.5, 0.85, 'Pearson correlation coefficient', fontsize=8, ha='center')
 fig.supylabel('Human head model', fontsize = 9)
 fig.tight_layout()
 plt.savefig(f'/exports/humgen/idenhond/projects/enformer/correlation/plots_paper/Plots_paper/Fig1_correlation_dnnhead/dnn_head_vs_enformer_perassaytype.png', bbox_inches='tight', dpi = 300)
@@ -142,6 +143,7 @@ for i, (key, value) in enumerate(df['assay type split ChIP'].value_counts().to_d
     ax[3].text(0.1, 0.95, '0.682', fontsize = 8, ha='center', va='center', transform=ax[3].transAxes)
     ax[3].text(0.9, 0.03, '0.928', fontsize = 8, ha='center', va='center', transform=ax[3].transAxes)
 plt.figtext(.5, .1, 'Enformer-pytorch', fontsize=9, ha='center')
+plt.figtext(.5, 0.85, 'Pearson correlation coefficient', fontsize=8, ha='center')
 fig.supylabel('Human head model', fontsize = 9)
 fig.tight_layout()
 plt.savefig(f'/exports/humgen/idenhond/projects/enformer/correlation/plots_paper/Plots_paper/Fig1_correlation_dnnhead/dnn_head_vs_enformer_perassaytype_train.png', bbox_inches='tight', dpi = 300)
@@ -183,6 +185,7 @@ for i, (key, value) in enumerate(df['assay type split ChIP'].value_counts().to_d
     ax[3].text(0.9, 0.03, ' 0.705', fontsize = 8, ha='center', va='center', transform=ax[3].transAxes)
 
 plt.figtext(.5, .1, 'Enformer-pytorch', fontsize=9, ha='center')
+plt.figtext(.5, 0.85, 'Pearson correlation coefficient', fontsize=8, ha='center')
 # fig.supxlabel('Enformer-pytorch')
 fig.supylabel('Human head model', fontsize = 9)
 

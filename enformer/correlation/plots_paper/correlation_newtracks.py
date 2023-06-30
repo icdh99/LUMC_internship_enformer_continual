@@ -70,8 +70,8 @@ legend_map = {'Histone ChIP': 'Histone ChIP',
               'DNASE': 'DNase'}
 plt.axline((0.2, 0.2), (0.85, 0.85), linewidth=0.5, color='k', linestyle = 'dashed')
 ax = sns.scatterplot(data = df, s = 100, x = 'correlation test all tracks model', y = 'correlation test all tracks model', hue = df['assay type'].map(legend_map), palette = sns.color_palette("Paired", 3))
-plt.xlabel('Human head model trained on new tracks')
-plt.ylabel('Human head model trained on all tracks')
+plt.xlabel(f'Human head model trained on new tracks \n (Pearson correlation coefficient)')
+plt.ylabel(f'Human head model trained on all tracks \n (Pearson correlation coefficient)')
 plt.legend(title = None)
 ax.text(1, 0.03, '0.658', fontsize = 9, ha='right', va='center', transform=ax.transAxes)
 ax.set_xticks([0, 0.2, 0.4, 0.6, 0.8, 1]) 
@@ -87,8 +87,8 @@ print(fig_width, fig_height)
 plt.figure(figsize = (4.8, 4.8))
 plt.axline((0.17, 0.17), (0.8, 0.8), linewidth=0.5, color='k', linestyle = 'dashed')
 ax = sns.scatterplot(data = df, s = 100, x = 'correlation validation all tracks model', y = 'correlation validation all tracks model', hue = df['assay type'].map(legend_map), palette = sns.color_palette("Paired", 3))
-plt.xlabel('Human head model trained on new tracks')
-plt.ylabel('Human head model trained on all tracks')
+plt.xlabel(f'Human head model trained on new tracks \n (Pearson correlation coefficient)')
+plt.ylabel(f'Human head model trained on all tracks \n (Pearson correlation coefficient)')
 plt.title('Validation set')
 ax.text(1, 0.03, '0.628', fontsize = 9, ha='right', va='center', transform=ax.transAxes)
 ax.set_xticks([0, 0.2, 0.4, 0.6, 0.8, 1]) 
@@ -103,8 +103,8 @@ plt.close()
 plt.figure(figsize = (4.8, 4.8))
 plt.axline((0.17, 0.17), (0.8, 0.8), linewidth=0.5, color='k', linestyle = 'dashed')
 ax = sns.scatterplot(data = df, s = 100, x = 'correlation train all tracks model', y = 'correlation train all tracks model', hue = df['assay type'].map(legend_map), palette = sns.color_palette("Paired", 3))
-plt.xlabel('Human head model trained on new tracks')
-plt.ylabel('Human head model trained on all tracks')
+plt.xlabel(f'Human head model trained on new tracks \n (Pearson correlation coefficient)')
+plt.ylabel(f'Human head model trained on all tracks \n (Pearson correlation coefficient)')
 plt.title('Train set')
 plt.legend(title = None)
 ax.text(1, 0.03, '0.628', fontsize = 9, ha='right', va='center', transform=ax.transAxes)
@@ -117,7 +117,7 @@ plt.savefig('/exports/humgen/idenhond/projects/enformer/correlation/plots_paper/
 plt.close()
 
 
-exit()
+
 """
 Compare performance of 5313  tracks to dnn head model
 """
@@ -236,7 +236,7 @@ for i, (key, value) in enumerate(df['assay type split ChIP'].value_counts().to_d
     ax[3].text(0.9, 0.03, '0.682', fontsize = 5, ha='center', va='center', transform=ax[3].transAxes)
 plt.figtext(.5, .25, f'Human head model trained on all tracks', fontsize = 6, ha='center')
 fig.supylabel(f'      Human head model \ntrained on Enformer tracks', fontsize = 6)
-plt.figtext(.5, .75, f'Train set', fontsize = 8, ha='center')
+plt.figtext(.5, .75, f'Train set (Pearson correlation coefficient)', fontsize = 6, ha='center')
 fig.tight_layout()
 plt.savefig(f'/exports/humgen/idenhond/projects/enformer/correlation/plots_paper/Plots_paper/Fig2_newtracks/Scatter_corr_train_alltracks.png', bbox_inches='tight', dpi = 300)
 
@@ -271,7 +271,7 @@ for i, (key, value) in enumerate(df['assay type split ChIP'].value_counts().to_d
     ax[3].text(0.9, 0.03, '0.588', fontsize = 5, ha='center', va='center', transform=ax[3].transAxes)
 plt.figtext(.5, .25, f'Human head model trained on all tracks', fontsize = 6, ha='center')
 fig.supylabel(f'      Human head model \ntrained on Enformer tracks', fontsize = 6)
-plt.figtext(.5, .75, f'Validation set', fontsize = 8, ha='center')
+plt.figtext(.5, .75, f'Validation set (Pearson correlation coefficient)', fontsize = 6, ha='center')
 fig.tight_layout()
 plt.savefig(f'/exports/humgen/idenhond/projects/enformer/correlation/plots_paper/Plots_paper/Fig2_newtracks/Scatter_corr_validation_alltracks.png', bbox_inches='tight', dpi = 300)
 
@@ -306,6 +306,6 @@ for i, (key, value) in enumerate(df['assay type split ChIP'].value_counts().to_d
     ax[3].text(0.9, 0.03, '0.575', fontsize = 5, ha='center', va='center', transform=ax[3].transAxes)
 plt.figtext(.5, .25, f'Human head model trained on all tracks', fontsize = 6, ha='center')
 fig.supylabel(f'      Human head model \ntrained on Enformer tracks', fontsize = 6)
-plt.figtext(.5, .75, f'Test set', fontsize = 8, ha='center')
+plt.figtext(.5, .75, f'Test set (Pearson correlation coefficient)', fontsize = 6, ha='center')
 fig.tight_layout()
 plt.savefig(f'/exports/humgen/idenhond/projects/enformer/correlation/plots_paper/Plots_paper/Fig2_newtracks/Scatter_corr_test_alltracks.png', bbox_inches='tight', dpi = 300)
